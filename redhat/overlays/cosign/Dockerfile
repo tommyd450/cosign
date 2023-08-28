@@ -2,6 +2,7 @@
 FROM registry.access.redhat.com/ubi9/go-toolset@sha256:52ab391730a63945f61d93e8c913db4cc7a96f200de909cd525e2632055d9fa6 AS build-env
 WORKDIR /cosign
 COPY . .
+USER root
 RUN make cosign
 
 #Install Cosign 
