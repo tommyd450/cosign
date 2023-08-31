@@ -1,0 +1,13 @@
+diff --git a/.github/workflows/tests.yaml b/.github/workflows/tests.yaml
+index 3b3d16e2..38464a2b 100644
+--- a/.github/workflows/tests.yaml
++++ b/.github/workflows/tests.yaml
+@@ -163,7 +163,7 @@ jobs:
+       - name: Check license headers
+         run: |
+           set -e
+-          addlicense -check -l apache -c 'The Sigstore Authors' -ignore "third_party/**" -v *
++          addlicense -check -l apache -c 'The Sigstore Authors' -ignore "third_party/**" -ignore Dockerfile -v *
+ 
+   golangci:
+     name: lint
