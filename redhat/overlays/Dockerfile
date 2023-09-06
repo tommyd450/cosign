@@ -3,6 +3,7 @@ FROM registry.access.redhat.com/ubi9/go-toolset@sha256:52ab391730a63945f61d93e8c
 WORKDIR /cosign
 COPY . .
 USER root
+RUN git config --global --add safe.directory /cosign
 RUN make cosign
 
 #Install Cosign 
