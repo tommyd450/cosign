@@ -85,21 +85,21 @@ git commit -m "${redhat_files_msg}"
 # Push the release-next branch
 git push -f origin "${redhat_ref}"
 
-# # Trigger CI
-# # TODO: Set up openshift or github CI to run on release-next-ci
-# git checkout "${redhat_ref}" -B "${redhat_ref}"-ci
-# date > ci
-# git add ci
-# git commit -m "${robot_trigger_msg}"
-# git push -f origin "${redhat_ref}-ci"
+# Trigger CI
+# TODO: Set up openshift or github CI to run on release-next-ci
+git checkout "${redhat_ref}" -B "${redhat_ref}"-ci
+date > ci
+git add ci
+git commit -m "${robot_trigger_msg}"
+git push -f origin "${redhat_ref}-ci"
 
-# if hash hub 2>/dev/null; then
-#    # Test if there is already a sync PR in
-#    COUNT=$(hub api -H "Accept: application/vnd.github.v3+json" repos/securesign/${REPO_NAME}/pulls --flat \
-#     | grep -c "${robot_trigger_msg}") || true
-#    if [ "$COUNT" = "0" ]; then
-#       hub pull-request --no-edit -l "kind/sync-fork-to-upstream" -b securesign/${REPO_NAME}:${redhat_ref} -h securesign/${REPO_NAME}:${redhat_ref}-ci -m "${robot_trigger_msg}"
-#    fi
-# else
-#    echo "hub (https://github.com/github/hub) is not installed, so you'll need to create a PR manually."
-# fi
+if hash hub 2>/dev/null; then
+   # Test if there is already a sync PR in
+   COUNT=$(hub api -H "Accept: application/vnd.github.v3+json" repos/securesign/${REPO_NAME}/pulls --flat \
+    | grep -c "${robot_trigger_msg}") || true
+   if [ "$COUNT" = "0" ]; then
+      hub pull-request --no-edit -l "kind/sync-fork-to-upstream" -b securesign/${REPO_NAME}:${redhat_ref} -h securesign/${REPO_NAME}:${redhat_ref}-ci -m "${robot_trigger_msg}"
+   fi
+else
+   echo "hub (https://github.com/github/hub) is not installed, so you'll need to create a PR manually."
+fi
