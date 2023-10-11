@@ -15,6 +15,7 @@ LABEL io.k8s.description="Cosign is a container signing tool that leverages simp
 LABEL io.k8s.display-name="Cosign container image for Red Hat Trusted Signer"
 LABEL io.openshift.tags="cosign trusted-signer"
 LABEL summary="Provides the cosign CLI binary for signing and verifying container images."
+LABEL com.redhat.component="cosign"
 
 COPY --from=build-env /cosign/cosign /usr/local/bin/cosign
 RUN chown root:0 /usr/local/bin/cosign && chmod g+wx /usr/local/bin/cosign
