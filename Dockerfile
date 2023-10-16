@@ -5,7 +5,7 @@ WORKDIR /cosign
 COPY . .
 USER root
 RUN git config --global --add safe.directory /cosign
-RUN make cosign
+RUN GOFLAGS="" make cosign
 
 # Install Cosign
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:0dfa71a7ec2caf445e7ac6b7422ae67f3518960bd6dbf62a7b77fa7a6cfc02b1
