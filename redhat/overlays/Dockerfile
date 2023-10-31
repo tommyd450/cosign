@@ -6,9 +6,9 @@ COPY . .
 USER root
 RUN git config --global --add safe.directory /cosign
 
-RUN make cosign-linux-amd64
-RUN make cosign-darwin-amd64
-RUN make cosign-windows
+RUN make -f Build.mak cosign-linux-amd64
+RUN make -f Build.mak cosign-darwin-amd64
+RUN make -f Build.mak cosign-windows
 
 RUN gzip cosign-darwin-amd64
 RUN gzip cosign-windows-amd64
