@@ -5,7 +5,11 @@ WORKDIR /cosign
 COPY . .
 USER root
 RUN git config --global --add safe.directory /cosign
-RUN make cross
+
+RUN make cosign-linux-amd64
+RUN make cosign-darwin-amd64
+RUN make cosign-windows
+
 RUN gzip cosign-darwin-amd64
 RUN gzip cosign-windows-amd64
 
