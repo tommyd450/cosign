@@ -5,7 +5,7 @@ WORKDIR /cosign
 COPY . .
 USER root
 RUN git config --global --add safe.directory /cosign
-
+RUN dnf install -y perl-Digest-SHA
 RUN make cosign-linux-amd64
 RUN make cosign-darwin-amd64
 RUN make cosign-windows-amd64
