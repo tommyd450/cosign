@@ -4,14 +4,15 @@ FROM registry.access.redhat.com/ubi9/go-toolset@sha256:82d9bc5d3ceb43635288880f2
 WORKDIR /cosign
 COPY . .
 USER root
-RUN git config --global --add safe.directory /cosign
-
-RUN make -f Build.mak cosign-linux-amd64
-RUN make -f Build.mak cosign-darwin-amd64
-RUN make -f Build.mak cosign-windows
-
-RUN gzip cosign-darwin-amd64
-RUN gzip cosign-windows-amd64
+RUN git config --global --add safe.directory /cosign && \
+    git stash && \
+    export GIT_VERSION=$(git describe --tags --always --dirty) && \
+    git stash pop && \
+    make -f Build.mak cosign-linux-amd64 && \
+    make -f Build.mak cosign-darwin-amd64 && \
+    make -f Build.mak cosign-windows && \
+    gzip cosign-darwin-amd64 && \
+    gzip cosign-windows-amd64
 
 # Install Cosign
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:b40f52aa68b29634ff45429ee804afbaa61b33de29ae775568933c71610f07a4
@@ -26,11 +27,11 @@ LABEL com.redhat.component="cosign"
 COPY --from=build-env /cosign/cosign-darwin-amd64.gz /usr/local/bin/cosign-darwin-amd64.gz
 COPY --from=build-env /cosign/cosign-linux-amd64 /usr/local/bin/cosign-linux-amd64
 COPY --from=build-env /cosign/cosign-windows-amd64.gz /usr/local/bin/cosign-windows-amd64.gz
-RUN mv /usr/local/bin/cosign-linux-amd64 /usr/local/bin/cosign
 
-RUN chown root:0 /usr/local/bin/cosign-darwin-amd64.gz && chmod g+wx /usr/local/bin/cosign-darwin-amd64.gz 
-RUN chown root:0 /usr/local/bin/cosign && chmod g+wx /usr/local/bin/cosign
-RUN chown root:0 /usr/local/bin/cosign-windows-amd64.gz && chmod g+wx /usr/local/bin/cosign-windows-amd64.gz
+RUN mv /usr/local/bin/cosign-linux-amd64 /usr/local/bin/cosign && \
+    chown root:0 /usr/local/bin/cosign-darwin-amd64.gz && chmod g+wx /usr/local/bin/cosign-darwin-amd64.gz && \
+    chown root:0 /usr/local/bin/cosign && chmod g+wx /usr/local/bin/cosign && \
+    chown root:0 /usr/local/bin/cosign-windows-amd64.gz && chmod g+wx /usr/local/bin/cosign-windows-amd64.gz
 
 #Configure home directory
 ENV HOME=/home
