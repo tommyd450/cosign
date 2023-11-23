@@ -10,7 +10,7 @@ RUN git config --global --add safe.directory /cosign && \
     git stash pop && \
     make -f Build.mak cosign-linux-amd64 && \
     make -f Build.mak cosign-darwin-amd64 && \
-    make -f Build.mak cosign-windows && \
+    make -f Build.mak cosign-windows-amd64 && \
     gzip cosign-darwin-amd64 && \
     gzip cosign-windows-amd64
 
