@@ -7,7 +7,7 @@ LDFLAGS=-buildid= -X sigs.k8s.io/release-utils/version.gitVersion=$(GIT_VERSION)
         -X sigs.k8s.io/release-utils/version.buildDate=$(BUILD_DATE)
 
 .PHONY: 
-cross-platform: cosign-darwin-arm64 cosign-darwin-amd64 cosign-linux-amd64 cosign-linux-arm64 cosign-linux-ppc64le cosign-linux-s390x cosign-windows ## Build all distributable (cross-platform) binaries
+cross-platform: cosign-darwin-arm64 cosign-darwin-amd64 cosign-linux-amd64 cosign-linux-arm64 cosign-linux-ppc64le cosign-linux-s390x cosign-windows-amd64 ## Build all distributable (cross-platform) binaries
 
 .PHONY:	cosign-darwin-arm64
 cosign-darwin-arm64: ## Build for mac M1
