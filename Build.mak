@@ -33,6 +33,6 @@ cosign-linux-ppc64le: ## Build for Linux ppc64le
 cosign-linux-s390x:  ## Build for Linux s390x
 	env CGO_ENABLED=0 GOOS=linux GOARCH=s390x go build -o cosign-linux-s390x -trimpath -ldflags "$(LDFLAGS) -w -s" ./cmd/cosign
 
-.PHONY: cosign-windows
+.PHONY: cosign-windows-amd64
 cosign-windows-amd64: ## Build for Windows
 	env CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o cosign-windows-amd64 -trimpath -ldflags "$(LDFLAGS) -w -s" ./cmd/cosign
