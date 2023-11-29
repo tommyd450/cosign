@@ -4,10 +4,10 @@ FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:rhel_9_1.21 AS bui
 WORKDIR /cosign
 COPY . .
 USER root
-RUN git stash && \
-    git config --global --add safe.directory /cosign && \
-    git stash pop && \
+RUN git config --global --add safe.directory /cosign && \
+    git stash && \
     export GIT_VERSION=$(git describe --tags --always --dirty) && \
+    git stash pop && \
     go mod vendor && \
     make -f Build.mak cosign-linux-amd64 && \
     make -f Build.mak cosign-darwin-amd64 && \
