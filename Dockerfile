@@ -5,7 +5,9 @@ WORKDIR /cosign
 COPY . .
 USER root
 RUN git config --global --add safe.directory /cosign && \
+    git stash && \
     export GIT_VERSION=$(git describe --tags --always --dirty) && \
+    git stash pop && \
     go mod vendor && \
     make -f Build.mak cosign-linux-amd64 && \
     make -f Build.mak cosign-darwin-amd64 && \
