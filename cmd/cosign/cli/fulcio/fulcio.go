@@ -95,7 +95,9 @@ func GetCert(_ context.Context, sv signature.SignerVerifier, idToken, flow, oidc
 	case flowDevice:
 		c.flow = oauthflow.NewDeviceFlowTokenGetterForIssuer(oidcIssuer)
 	case flowNormal:
-		c.flow = oauthflow.DefaultIDTokenGetter
+		c.flow = &oauthflow.InteractiveIDTokenGetter{
+			HTMLPage: ui.RedHatInteractiveSuccessHTML,
+		}
 	case flowToken:
 		c.flow = &oauthflow.StaticTokenGetter{RawToken: idToken}
 	default:
