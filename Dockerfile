@@ -9,10 +9,12 @@ RUN git config --global --add safe.directory /cosign && \
     export GIT_VERSION=$(git describe --tags --always --dirty) && \
     git stash pop && \
     go mod vendor && \
-    make -f Build.mak cosign-linux-amd64 && \
-    make -f Build.mak cosign-darwin-amd64 && \
-    make -f Build.mak cosign-windows-amd64 && \
+    make -f Build.mak cross-platform && \
     gzip cosign-darwin-amd64 && \
+    gzip cosign-darwin-arm64 && \
+    gzip cosign-linux-ppc64le && \
+    gzip cosign-linux-s390x && \
+    gzip cosign-linux-arm64 && \
     gzip cosign-windows-amd64
 
 # Install Cosign
@@ -28,11 +30,21 @@ LABEL com.redhat.component="cosign"
 COPY --from=build-env /cosign/cosign-darwin-amd64.gz /usr/local/bin/cosign-darwin-amd64.gz
 COPY --from=build-env /cosign/cosign-linux-amd64 /usr/local/bin/cosign-linux-amd64
 COPY --from=build-env /cosign/cosign-windows-amd64.gz /usr/local/bin/cosign-windows-amd64.gz
+COPY --from=build-env /cosign/cosign-darwin-arm64.gz /usr/local/bin/cosign-darwin-arm64.gz
+COPY --from=build-env /cosign/cosign-linux-arm64.gz /usr/local/bin/cosign-linux-arm64.gz
+COPY --from=build-env /cosign/cosign-linux-ppc64le.gz /usr/local/bin/cosign-linux-ppc64le.gz
+COPY --from=build-env /cosign/cosign-linux-s390x.gz /usr/local/bin/cosign-linux-s390x.gz
 
 RUN mv /usr/local/bin/cosign-linux-amd64 /usr/local/bin/cosign && \
     chown root:0 /usr/local/bin/cosign-darwin-amd64.gz && chmod g+wx /usr/local/bin/cosign-darwin-amd64.gz && \
     chown root:0 /usr/local/bin/cosign && chmod g+wx /usr/local/bin/cosign && \
-    chown root:0 /usr/local/bin/cosign-windows-amd64.gz && chmod g+wx /usr/local/bin/cosign-windows-amd64.gz
+    chown root:0 /usr/local/bin/cosign-windows-amd64.gz && chmod g+wx /usr/local/bin/cosign-windows-amd64.gz && \
+
+    
+    chown root:0 /usr/local/bin/cosign-linux-arm64.gz && chmod g+wx /usr/local/bin/cosign-linux-arm64.gz && \
+    chown root:0 /usr/local/bin/cosign-darwin-arm64.gz && chmod g+wx /usr/local/bin/cosign-darwin-arm64.gz && \
+    chown root:0 /usr/local/bin/cosign-linux-ppc64le.gz && chmod g+wx /usr/local/bin/cosign-linux-ppc64le.gz && \
+    chown root:0 /usr/local/bin/cosign-linux-s390x.gz && chmod g+wx /usr/local/bin/cosign-linux-s390x.gz 
 
 #Configure home directory
 ENV HOME=/home
