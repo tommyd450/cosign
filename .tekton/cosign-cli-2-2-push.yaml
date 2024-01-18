@@ -382,7 +382,7 @@ spec:
         - name: name
           value: go-unit-test
         - name: bundle
-          value: quay.io/securesign/cosign-unit-test:latest
+          value: quay.io/securesign/cosign-unit-test@sha256:b1cd15a9eacc469572937c92b7fe95f5bcd4ae6f2af7c9d2db0b2f89988e2ac0
         - name: kind
           value: task
         resolver: bundles
