@@ -18,6 +18,7 @@ RUN git config --global --add safe.directory /cosign && \
     gzip cosign-windows-amd64
 
 # Install Cosign
+#
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:b7a3642d6245446da03d14482740be5f2fe58f30b9dfe001e89a39071a50edfc
 
 LABEL description="Cosign is a container signing tool that leverages simple, secure, and auditable signatures based on simple primitives and best practices."
