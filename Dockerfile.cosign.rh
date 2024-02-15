@@ -40,8 +40,6 @@ RUN mv /usr/local/bin/cosign-linux-amd64 /usr/local/bin/cosign && \
     chown root:0 /usr/local/bin/cosign-darwin-amd64.gz && chmod g+wx /usr/local/bin/cosign-darwin-amd64.gz && \
     chown root:0 /usr/local/bin/cosign && chmod g+wx /usr/local/bin/cosign && \
     chown root:0 /usr/local/bin/cosign-windows-amd64.gz && chmod g+wx /usr/local/bin/cosign-windows-amd64.gz && \
-
-    
     chown root:0 /usr/local/bin/cosign-linux-arm64.gz && chmod g+wx /usr/local/bin/cosign-linux-arm64.gz && \
     chown root:0 /usr/local/bin/cosign-darwin-arm64.gz && chmod g+wx /usr/local/bin/cosign-darwin-arm64.gz && \
     chown root:0 /usr/local/bin/cosign-linux-ppc64le.gz && chmod g+wx /usr/local/bin/cosign-linux-ppc64le.gz && \

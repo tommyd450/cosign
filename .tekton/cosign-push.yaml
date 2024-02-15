@@ -7,22 +7,22 @@ metadata:
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
-      == "redhat-v2.2"
+      == "main"
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: cli-1-0-gamma
-    appstudio.openshift.io/component: cosign-cli-2-2
+    appstudio.openshift.io/application: cli
+    appstudio.openshift.io/component: cosign
     pipelines.appstudio.openshift.io/type: build
-  name: cosign-cli-2-2-on-push
+  name: cosign-on-push
   namespace: rhtas-tenant
 spec:
   params:
   - name: dockerfile
-    value: Dockerfile
+    value: Dockerfile.cosign.rh
   - name: git-url
     value: '{{repo_url}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rhtas-tenant/cli-1-0-gamma/cosign-cli-2-2:{{revision}}
+    value: quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign:{{revision}}
   - name: path-context
     value: .
   - name: revision
