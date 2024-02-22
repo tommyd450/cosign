@@ -15,7 +15,7 @@
 # Gitsign
 #   https://catalog.redhat.com/software/containers/detail/652974c4f28b8157c60653c9
 #   docker://registry.redhat.io/rhtas-tech-preview/gitsign-rhel9
-##
+#
 
 # An image with oc so we can run `oc image extract` to download the binaries
 FROM registry.redhat.io/openshift4/ose-tools-rhel8:v4.11.0-202401122348.p0.gbf40a6c.assembly.stream AS downloads
