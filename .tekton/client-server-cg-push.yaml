@@ -11,18 +11,18 @@ metadata:
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: cli
-    appstudio.openshift.io/component: client-server
+    appstudio.openshift.io/component: client-server-cg
     pipelines.appstudio.openshift.io/type: build
-  name: client-server-on-push
+  name: client-server-cg-on-push
   namespace: rhtas-tenant
 spec:
   params:
   - name: dockerfile
-    value: Dockerfile.client-server.rh
+    value: Dockerfile.client-server-cg.rh
   - name: git-url
     value: '{{repo_url}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rhtas-tenant/cli/client-server:{{revision}}
+    value: quay.io/redhat-user-workloads/rhtas-tenant/cli/client-server-cg:{{revision}}
   - name: path-context
     value: images
   - name: revision

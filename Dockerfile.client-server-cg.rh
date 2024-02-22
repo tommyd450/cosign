@@ -1,0 +1,69 @@
+#
+# Note about source containers:
+# Due to the way this image is built, the source container for the image itself
+# does not include the full set of sources for the cli tool binaries included in
+# the image. The complete sources for each cli tool are available in the source
+# containers for the images that the binaries are extracted from.
+#
+# You can find the source containers for each of the cli tools in the following
+# locations:
+#
+# Cosign
+#   https://catalog.redhat.com/software/containers/detail/652971cd584d77e9d922883b
+#   docker://registry.redhat.io/rhtas-tech-preview/cosign-rhel9
+#
+# Gitsign
+#   https://catalog.redhat.com/software/containers/detail/652974c4f28b8157c60653c9
+#   docker://registry.redhat.io/rhtas-tech-preview/gitsign-rhel9
+#
+
+# An image with oc so we can run `oc image extract` to download the binaries
+FROM registry.redhat.io/openshift4/ose-tools-rhel8:v4.11.0-202401122348.p0.gbf40a6c.assembly.stream AS downloads
+
+ARG COSIGN_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:80987dd1d3515b14a3c4ec874b6100055219f3c53e0d86feb39d3011b8bbd9cc
+ARG GITSIGN_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:a3416a65b31881d586762fcc07382b530a06985224dfc1be5ce4af3e78eca50c
+
+RUN mkdir -p /downloads/cosign && \
+    mkdir -p /downloads/gitsign
+
+RUN oc image extract ${COSIGN_IMAGE}  --path /usr/local/bin/cosign*:/downloads/cosign && \
+    oc image extract ${GITSIGN_IMAGE} --path /usr/local/bin/gitsign_cli_*:/downloads/gitsign
+
+# So we have a consistently named and gzipped file
+RUN gzip /downloads/cosign/cosign && \
+    mv /downloads/cosign/cosign.gz /downloads/cosign/cosign-linux-amd64.gz
+
+FROM registry.access.redhat.com/ubi9/httpd-24@sha256:965f7b03ae8f45228bad765ce47bc8956711e854213df0e4cee8623d51317b0a
+
+RUN mkdir -p /var/www/html/clients/darwin && \
+    mkdir -p /var/www/html/clients/linux && \
+    mkdir -p /var/www/html/clients/windows
+
+COPY --from=downloads /downloads/cosign/cosign-darwin-amd64.gz  /var/www/html/clients/darwin/cosign-amd64.gz
+COPY --from=downloads /downloads/cosign/cosign-darwin-arm64.gz  /var/www/html/clients/darwin/cosign-arm64.gz
+COPY --from=downloads /downloads/cosign/cosign-linux-amd64.gz   /var/www/html/clients/linux/cosign-amd64.gz
+COPY --from=downloads /downloads/cosign/cosign-linux-arm64.gz   /var/www/html/clients/linux/cosign-arm64.gz
+COPY --from=downloads /downloads/cosign/cosign-linux-ppc64le.gz /var/www/html/clients/linux/cosign-ppc64le.gz
+COPY --from=downloads /downloads/cosign/cosign-linux-s390x.gz   /var/www/html/clients/linux/cosign-s390x.gz
+COPY --from=downloads /downloads/cosign/cosign-windows-amd64.gz /var/www/html/clients/windows/cosign-amd64.gz
+
+COPY --from=downloads /downloads/gitsign/gitsign_cli_darwin_amd64.gz      /var/www/html/clients/darwin/gitsign-amd64.gz
+COPY --from=downloads /downloads/gitsign/gitsign_cli_darwin_arm64.gz      /var/www/html/clients/darwin/gitsign-arm64.gz
+COPY --from=downloads /downloads/gitsign/gitsign_cli_linux_amd64.gz       /var/www/html/clients/linux/gitsign-amd64.gz
+COPY --from=downloads /downloads/gitsign/gitsign_cli_linux_arm64.gz       /var/www/html/clients/linux/gitsign-arm64.gz
+COPY --from=downloads /downloads/gitsign/gitsign_cli_linux_ppc64le.gz     /var/www/html/clients/linux/gitsign-ppc64le.gz
+COPY --from=downloads /downloads/gitsign/gitsign_cli_linux_s390x.gz       /var/www/html/clients/linux/gitsign-s390x.gz
+COPY --from=downloads /downloads/gitsign/gitsign_cli_windows_amd64.exe.gz /var/www/html/clients/windows/gitsign-amd64.gz
+
+CMD run-httpd
+
+LABEL \
+      com.redhat.component="trusted-artifact-signer-serve-cli-container-cg" \
+      name="trusted-artifact-signer-serve-cli-container-cg" \
+      version="0.0.1" \
+      summary="Red Hat serves Trusted Artifact Signer CLI binaries, cosign and gitsign" \
+      description="Serves Trusted Artifact Signer CLI binaries, cosign and gitsign, from an HTTP server" \
+      io.k8s.description="Serves Trusted Artifact Signer CLI binaries, cosign and gitsign, from an HTTP server" \
+      io.k8s.display-name="Red Hat serves Trusted Artifact Signer CLI binaries, cosign and gitsign" \
+      io.openshift.tags="cosign, gitsign, rhtas, trusted, artifact, signer, sigstore" \
+      maintainer="trusted-artifact-signer@redhat.com"
