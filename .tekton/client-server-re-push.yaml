@@ -2,29 +2,27 @@ apiVersion: tekton.dev/v1
 kind: PipelineRun
 metadata:
   annotations:
-    build.appstudio.openshift.io/repo: https://github.com/securesign/cosign?rev={{revision}}
+    build.appstudio.openshift.io/repo: https://github.com/securesign/sigstore-ocp?rev={{revision}}
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
-    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch == "main" && ( "Dockerfile.client-server.rh".pathChanged() || ".tekton/.tekton/client-server-pull-request.yaml".pathChanged())
+    pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
+      == "main"
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: cli
-    appstudio.openshift.io/component: client-server
+    appstudio.openshift.io/component: client-server-re
     pipelines.appstudio.openshift.io/type: build
-  name: client-server-on-pull-request
+  name: client-server-re-on-push
   namespace: rhtas-tenant
 spec:
   params:
   - name: dockerfile
-    value: Dockerfile.client-server.rh
+    value: Dockerfile.client-server-re.rh
   - name: git-url
     value: '{{repo_url}}'
-  - name: image-expires-after
-    value: 5d
   - name: output-image
-    value: quay.io/redhat-user-workloads/rhtas-tenant/cli/client-server:on-pr-{{revision}}
+    value: quay.io/redhat-user-workloads/rhtas-tenant/cli/client-server-re:{{revision}}
   - name: path-context
     value: images
   - name: revision
