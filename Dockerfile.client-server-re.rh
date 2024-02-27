@@ -15,7 +15,7 @@
 # Enterprise Contract
 #  https://catalog.redhat.com/software/containers/detail/65a0454ad3407c4a7825b10c
 #  docker://registry.redhat.io/rhtas-tech-preview/ec-rhel9
-#
+##
 
 # An image with oc so we can run `oc image extract` to download the binaries
 FROM registry.redhat.io/openshift4/ose-tools-rhel8:v4.11.0-202401122348.p0.gbf40a6c.assembly.stream AS downloads

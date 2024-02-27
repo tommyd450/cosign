@@ -44,7 +44,7 @@ RUN mv /usr/local/bin/cosign-linux-amd64 /usr/local/bin/cosign && \
     chown root:0 /usr/local/bin/cosign-linux-ppc64le.gz && chmod g+wx /usr/local/bin/cosign-linux-ppc64le.gz && \
     chown root:0 /usr/local/bin/cosign-linux-s390x.gz && chmod g+wx /usr/local/bin/cosign-linux-s390x.gz 
 
-#Configure home directory
+##Configure home directory
 ENV HOME=/home
 RUN chgrp -R 0 /${HOME} && chmod -R g=u /${HOME}
 
