@@ -29,29 +29,29 @@ RUN mkdir -p /downloads/rekor && \
 RUN oc image extract ${REKOR_IMAGE}   --path /usr/local/bin/rekor_cli_*:/downloads/rekor && \
     oc image extract ${EC_IMAGE}      --path /usr/local/bin/ec_*:/downloads/ec
 
-FROM registry.access.redhat.com/ubi9/httpd-24@sha256:965f7b03ae8f45228bad765ce47bc8956711e854213df0e4cee8623d51317b0a
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:06d06f15f7b641a78f2512c8817cbecaa1bf549488e273f5ac27ff1654ed33f0
+ENV APP_ROOT=/opt/app-root
+WORKDIR $APP_ROOT/src/
 
-RUN mkdir -p /var/www/html/clients/darwin && \
-    mkdir -p /var/www/html/clients/linux && \
-    mkdir -p /var/www/html/clients/windows
+RUN mkdir -p $APP_ROOT/src/clients/darwin && \
+    mkdir -p $APP_ROOT/src/clients/linux && \
+    mkdir -p $APP_ROOT/src/clients/windows
 
-COPY --from=downloads /downloads/rekor/rekor_cli_darwin_amd64.gz      /var/www/html/clients/darwin/rekor-cli-amd64.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_darwin_arm64.gz      /var/www/html/clients/darwin/rekor-cli-arm64.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_linux_amd64.gz       /var/www/html/clients/linux/rekor-cli-amd64.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_linux_arm64.gz       /var/www/html/clients/linux/rekor-cli-arm64.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_linux_ppc64le.gz     /var/www/html/clients/linux/rekor-cli-ppc64le.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_linux_s390x.gz       /var/www/html/clients/linux/rekor-cli-s390x.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_windows_amd64.exe.gz /var/www/html/clients/windows/rekor-cli-amd64.gz
+COPY --from=downloads /downloads/rekor/rekor_cli_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/rekor-cli-amd64.gz
+COPY --from=downloads /downloads/rekor/rekor_cli_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/rekor-cli-arm64.gz
+COPY --from=downloads /downloads/rekor/rekor_cli_linux_amd64.gz       $APP_ROOT/src/clients/linux/rekor-cli-amd64.gz
+COPY --from=downloads /downloads/rekor/rekor_cli_linux_arm64.gz       $APP_ROOT/src/clients/linux/rekor-cli-arm64.gz
+COPY --from=downloads /downloads/rekor/rekor_cli_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/rekor-cli-ppc64le.gz
+COPY --from=downloads /downloads/rekor/rekor_cli_linux_s390x.gz       $APP_ROOT/src/clients/linux/rekor-cli-s390x.gz
+COPY --from=downloads /downloads/rekor/rekor_cli_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/rekor-cli-amd64.gz
 
-COPY --from=downloads /downloads/ec/ec_darwin_amd64.gz      /var/www/html/clients/darwin/ec-amd64.gz
-COPY --from=downloads /downloads/ec/ec_darwin_arm64.gz      /var/www/html/clients/darwin/ec-arm64.gz
-COPY --from=downloads /downloads/ec/ec_linux_amd64.gz       /var/www/html/clients/linux/ec-amd64.gz
-COPY --from=downloads /downloads/ec/ec_linux_arm64.gz       /var/www/html/clients/linux/ec-arm64.gz
-COPY --from=downloads /downloads/ec/ec_linux_ppc64le.gz     /var/www/html/clients/linux/ec-ppc64le.gz
-COPY --from=downloads /downloads/ec/ec_linux_s390x.gz       /var/www/html/clients/linux/ec-s390x.gz
-COPY --from=downloads /downloads/ec/ec_windows_amd64.exe.gz /var/www/html/clients/windows/ec-amd64.gz
-
-CMD run-httpd
+COPY --from=downloads /downloads/ec/ec_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/ec-amd64.gz
+COPY --from=downloads /downloads/ec/ec_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/ec-arm64.gz
+COPY --from=downloads /downloads/ec/ec_linux_amd64.gz       $APP_ROOT/src/clients/linux/ec-amd64.gz
+COPY --from=downloads /downloads/ec/ec_linux_arm64.gz       $APP_ROOT/src/clients/linux/ec-arm64.gz
+COPY --from=downloads /downloads/ec/ec_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/ec-ppc64le.gz
+COPY --from=downloads /downloads/ec/ec_linux_s390x.gz       $APP_ROOT/src/clients/linux/ec-s390x.gz
+COPY --from=downloads /downloads/ec/ec_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/ec-amd64.gz
 
 LABEL \
       com.redhat.component="trusted-artifact-signer-serve-cli-container-re" \
