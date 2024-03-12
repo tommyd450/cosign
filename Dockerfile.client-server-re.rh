@@ -21,7 +21,7 @@
 FROM registry.redhat.io/openshift4/ose-tools-rhel8:v4.11.0-202401122348.p0.gbf40a6c.assembly.stream AS downloads
 
 ARG REKOR_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/rekor/rekor-cli@sha256:d45c5df9f79aa3a12b1f5d44f2da61f0e407f0c0cfc932826113004a81c84533
-ARG EC_IMAGE=quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v02/cli-v02:e2717cc2995519b451b3584505a7da3c0a7d40ef
+ARG EC_IMAGE=quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v02/cli-v02:c862b0f77bb10082d1440e0d4b6a4e9645b83382
 
 RUN mkdir -p /downloads/rekor && \
     mkdir -p /downloads/ec
