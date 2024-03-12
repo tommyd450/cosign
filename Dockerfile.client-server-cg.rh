@@ -20,8 +20,8 @@
 # An image with oc so we can run `oc image extract` to download the binaries
 FROM registry.redhat.io/openshift4/ose-tools-rhel8:v4.11.0-202401122348.p0.gbf40a6c.assembly.stream AS downloads
 
-ARG COSIGN_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:80987dd1d3515b14a3c4ec874b6100055219f3c53e0d86feb39d3011b8bbd9cc
-ARG GITSIGN_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:a3416a65b31881d586762fcc07382b530a06985224dfc1be5ce4af3e78eca50c
+ARG COSIGN_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:8cc2fcf240357c9ace8fea16da0c1b27fa91a03c53e16cd909ce9aa20d01a1f9
+ARG GITSIGN_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:4c67f8eb3f3156b47e31ebffeae950114943e560e0396cd6320dc7de5bdc255d
 
 RUN mkdir -p /downloads/cosign && \
     mkdir -p /downloads/gitsign
