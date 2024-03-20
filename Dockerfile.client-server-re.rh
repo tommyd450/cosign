@@ -1,35 +1,11 @@
-#
-# Note about source containers:
-# Due to the way this image is built, the source container for the image itself
-# does not include the full set of sources for the cli tool binaries included in
-# the image. The complete sources for each cli tool are available in the source
-# containers for the images that the binaries are extracted from.
-#
-# You can find the source containers for each of the cli tools in the following
-# locations:
-#
-# Rekor CLI
-#   https://catalog.redhat.com/software/containers/detail/652976ecee3ec526235c8a56
-#   docker://registry.redhat.io/rhtas-tech-preview/rekor-cli-rhel9
-#
-# Enterprise Contract
-#  https://catalog.redhat.com/software/containers/detail/65a0454ad3407c4a7825b10c
-#  docker://registry.redhat.io/rhtas-tech-preview/ec-rhel9
-##
+# Provides the Trusted Artifact Signer CLI binaries, rekor-cli and ec
 
-# An image with oc so we can run `oc image extract` to download the binaries
-FROM registry.redhat.io/openshift4/ose-tools-rhel8:v4.11.0-202401122348.p0.gbf40a6c.assembly.stream AS downloads
 
-ARG REKOR_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/rekor/rekor-cli@sha256:d45c5df9f79aa3a12b1f5d44f2da61f0e407f0c0cfc932826113004a81c84533
-ARG EC_IMAGE=quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v02/cli-v02:c862b0f77bb10082d1440e0d4b6a4e9645b83382
-
-RUN mkdir -p /downloads/rekor && \
-    mkdir -p /downloads/ec
-
-RUN oc image extract ${REKOR_IMAGE}   --path /usr/local/bin/rekor_cli_*:/downloads/rekor && \
-    oc image extract ${EC_IMAGE}      --path /usr/local/bin/ec_*:/downloads/ec
+FROM quay.io/redhat-user-workloads/rhtas-tenant/rekor/rekor-cli@sha256:d45c5df9f79aa3a12b1f5d44f2da61f0e407f0c0cfc932826113004a81c84533 as rekor
+FROM quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v02/cli-v02:c862b0f77bb10082d1440e0d4b6a4e9645b83382 as ec
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:119ac25920c8bb50c8b5fd75dcbca369bf7d1f702b82f3d39663307890f0bf26
+
 ENV APP_ROOT=/opt/app-root
 WORKDIR $APP_ROOT/src/
 
@@ -37,26 +13,26 @@ RUN mkdir -p $APP_ROOT/src/clients/darwin && \
     mkdir -p $APP_ROOT/src/clients/linux && \
     mkdir -p $APP_ROOT/src/clients/windows
 
-COPY --from=downloads /downloads/rekor/rekor_cli_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/rekor-cli-amd64.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/rekor-cli-arm64.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_linux_amd64.gz       $APP_ROOT/src/clients/linux/rekor-cli-amd64.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_linux_arm64.gz       $APP_ROOT/src/clients/linux/rekor-cli-arm64.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/rekor-cli-ppc64le.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_linux_s390x.gz       $APP_ROOT/src/clients/linux/rekor-cli-s390x.gz
-COPY --from=downloads /downloads/rekor/rekor_cli_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/rekor-cli-amd64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/rekor-cli-amd64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/rekor-cli-arm64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_linux_amd64.gz       $APP_ROOT/src/clients/linux/rekor-cli-amd64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_linux_arm64.gz       $APP_ROOT/src/clients/linux/rekor-cli-arm64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/rekor-cli-ppc64le.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_linux_s390x.gz       $APP_ROOT/src/clients/linux/rekor-cli-s390x.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/rekor-cli-amd64.gz
 
-COPY --from=downloads /downloads/ec/ec_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/ec-amd64.gz
-COPY --from=downloads /downloads/ec/ec_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/ec-arm64.gz
-COPY --from=downloads /downloads/ec/ec_linux_amd64.gz       $APP_ROOT/src/clients/linux/ec-amd64.gz
-COPY --from=downloads /downloads/ec/ec_linux_arm64.gz       $APP_ROOT/src/clients/linux/ec-arm64.gz
-COPY --from=downloads /downloads/ec/ec_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/ec-ppc64le.gz
-COPY --from=downloads /downloads/ec/ec_linux_s390x.gz       $APP_ROOT/src/clients/linux/ec-s390x.gz
-COPY --from=downloads /downloads/ec/ec_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/ec-amd64.gz
+COPY --from=ec /usr/local/bin/ec_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/ec-amd64.gz
+COPY --from=ec /usr/local/bin/ec_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/ec-arm64.gz
+COPY --from=ec /usr/local/bin/ec_linux_amd64.gz       $APP_ROOT/src/clients/linux/ec-amd64.gz
+COPY --from=ec /usr/local/bin/ec_linux_arm64.gz       $APP_ROOT/src/clients/linux/ec-arm64.gz
+COPY --from=ec /usr/local/bin/ec_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/ec-ppc64le.gz
+COPY --from=ec /usr/local/bin/ec_linux_s390x.gz       $APP_ROOT/src/clients/linux/ec-s390x.gz
+COPY --from=ec /usr/local/bin/ec_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/ec-usr/usr/usr/usr/usr/local/bin
 
 LABEL \
       com.redhat.component="trusted-artifact-signer-serve-cli-container-re" \
       name="trusted-artifact-signer-serve-cli-container-re" \
-      version="0.0.1" \
+      version="1.0.0" \
       summary="Red Hat serves Trusted Artifact Signer CLI binaries, rekor-cli and ec" \
       description="Serves Trusted Artifact Signer CLI binaries, rekor-cli and ec, from an HTTP server" \
       io.k8s.description="Serves Trusted Artifact Signer CLI binaries, rekor-cli and ec, from an HTTP server" \

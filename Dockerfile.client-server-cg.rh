@@ -1,37 +1,7 @@
-#
-# Note about source containers:
-# Due to the way this image is built, the source container for the image itself
-# does not include the full set of sources for the cli tool binaries included in
-# the image. The complete sources for each cli tool are available in the source
-# containers for the images that the binaries are extracted from.
-#
-# You can find the source containers for each of the cli tools in the following
-# locations:
-#
-# Cosign
-#   https://catalog.redhat.com/software/containers/detail/652971cd584d77e9d922883b
-#   docker://registry.redhat.io/rhtas-tech-preview/cosign-rhel9
-#
-# Gitsign
-#   https://catalog.redhat.com/software/containers/detail/652974c4f28b8157c60653c9
-#   docker://registry.redhat.io/rhtas-tech-preview/gitsign-rhel9
-##
+# Provides the Trusted Artifact Signer CLI binaries, cosign and gitsign
 
-# An image with oc so we can run `oc image extract` to download the binaries
-FROM registry.redhat.io/openshift4/ose-tools-rhel8:v4.11.0-202401122348.p0.gbf40a6c.assembly.stream AS downloads
-
-ARG COSIGN_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:8cc2fcf240357c9ace8fea16da0c1b27fa91a03c53e16cd909ce9aa20d01a1f9
-ARG GITSIGN_IMAGE=quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:4c67f8eb3f3156b47e31ebffeae950114943e560e0396cd6320dc7de5bdc255d
-
-RUN mkdir -p /downloads/cosign && \
-    mkdir -p /downloads/gitsign
-
-RUN oc image extract ${COSIGN_IMAGE}  --path /usr/local/bin/cosign*:/downloads/cosign && \
-    oc image extract ${GITSIGN_IMAGE} --path /usr/local/bin/gitsign_cli_*:/downloads/gitsign
-
-# So we have a consistently named and gzipped file
-RUN gzip /downloads/cosign/cosign && \
-    mv /downloads/cosign/cosign.gz /downloads/cosign/cosign-linux-amd64.gz
+FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:15008a1cbf0d79e9d03cb9794683b0c6bd9d0ee34149af08c5a964795b56d620 AS cosign
+FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:4c67f8eb3f3156b47e31ebffeae950114943e560e0396cd6320dc7de5bdc255d AS gitsign
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:119ac25920c8bb50c8b5fd75dcbca369bf7d1f702b82f3d39663307890f0bf26
 ENV APP_ROOT=/opt/app-root
@@ -41,26 +11,27 @@ RUN mkdir -p $APP_ROOT/src/clients/darwin && \
     mkdir -p $APP_ROOT/src/clients/linux && \
     mkdir -p $APP_ROOT/src/clients/windows
 
-COPY --from=downloads /downloads/cosign/cosign-darwin-amd64.gz  $APP_ROOT/src/clients/darwin/cosign-amd64.gz
-COPY --from=downloads /downloads/cosign/cosign-darwin-arm64.gz  $APP_ROOT/src/clients/darwin/cosign-arm64.gz
-COPY --from=downloads /downloads/cosign/cosign-linux-amd64.gz   $APP_ROOT/src/clients/linux/cosign-amd64.gz
-COPY --from=downloads /downloads/cosign/cosign-linux-arm64.gz   $APP_ROOT/src/clients/linux/cosign-arm64.gz
-COPY --from=downloads /downloads/cosign/cosign-linux-ppc64le.gz $APP_ROOT/src/clients/linux/cosign-ppc64le.gz
-COPY --from=downloads /downloads/cosign/cosign-linux-s390x.gz   $APP_ROOT/src/clients/linux/cosign-s390x.gz
-COPY --from=downloads /downloads/cosign/cosign-windows-amd64.gz $APP_ROOT/src/clients/windows/cosign-amd64.gz
+COPY --from=cosign /usr/local/bin/cosign-darwin-amd64.gz  $APP_ROOT/src/clients/darwin/cosign-amd64.gz
+COPY --from=cosign /usr/local/bin/cosign-darwin-arm64.gz  $APP_ROOT/src/clients/darwin/cosign-arm64.gz
+COPY --from=cosign /usr/local/bin/cosign-linux-amd64.gz   $APP_ROOT/src/clients/linux/cosign-amd64.gz
+COPY --from=cosign /usr/local/bin/cosign-linux-arm64.gz   $APP_ROOT/src/clients/linux/cosign-arm64.gz
+COPY --from=cosign /usr/local/bin/cosign-linux-ppc64le.gz $APP_ROOT/src/clients/linux/cosign-ppc64le.gz
+COPY --from=cosign /usr/local/bin/cosign-linux-s390x.gz   $APP_ROOT/src/clients/linux/cosign-s390x.gz
+COPY --from=cosign /usr/local/bin/cosign-windows-amd64.gz $APP_ROOT/src/clients/windows/cosign-amd64.gz
 
-COPY --from=downloads /downloads/gitsign/gitsign_cli_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/gitsign-amd64.gz
-COPY --from=downloads /downloads/gitsign/gitsign_cli_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/gitsign-arm64.gz
-COPY --from=downloads /downloads/gitsign/gitsign_cli_linux_amd64.gz       $APP_ROOT/src/clients/linux/gitsign-amd64.gz
-COPY --from=downloads /downloads/gitsign/gitsign_cli_linux_arm64.gz       $APP_ROOT/src/clients/linux/gitsign-arm64.gz
-COPY --from=downloads /downloads/gitsign/gitsign_cli_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/gitsign-ppc64le.gz
-COPY --from=downloads /downloads/gitsign/gitsign_cli_linux_s390x.gz       $APP_ROOT/src/clients/linux/gitsign-s390x.gz
-COPY --from=downloads /downloads/gitsign/gitsign_cli_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/gitsign-amd64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/gitsign-amd64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/gitsign-arm64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_linux_amd64.gz       $APP_ROOT/src/clients/linux/gitsign-amd64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_linux_arm64.gz       $APP_ROOT/src/clients/linux/gitsign-arm64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/gitsign-ppc64le.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_linux_s390x.gz       $APP_ROOT/src/clients/linux/gitsign-s390x.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/gitsign-amd64.gz
+
 
 LABEL \
       com.redhat.component="trusted-artifact-signer-serve-cli-container-cg" \
       name="trusted-artifact-signer-serve-cli-container-cg" \
-      version="0.0.1" \
+      version="1.0.0" \
       summary="Red Hat serves Trusted Artifact Signer CLI binaries, cosign and gitsign" \
       description="Serves Trusted Artifact Signer CLI binaries, cosign and gitsign, from an HTTP server" \
       io.k8s.description="Serves Trusted Artifact Signer CLI binaries, cosign and gitsign, from an HTTP server" \
