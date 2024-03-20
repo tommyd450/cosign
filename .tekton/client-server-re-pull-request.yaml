@@ -32,9 +32,7 @@ spec:
   - name: prefetch-input
     value: ''
   - name: hermetic
-    # Temporary workaround related to https://github.com/securesign/sigstore-ocp/pull/160
-    value: "false"
-    # value: "true"
+    value: "true"
   - name: build-source-image
     value: "true"
   pipelineSpec:
