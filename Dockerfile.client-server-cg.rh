@@ -1,7 +1,7 @@
 # Provides the Trusted Artifact Signer CLI binaries, cosign and gitsign
 
-FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:15008a1cbf0d79e9d03cb9794683b0c6bd9d0ee34149af08c5a964795b56d620 AS cosign
-FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:4c67f8eb3f3156b47e31ebffeae950114943e560e0396cd6320dc7de5bdc255d AS gitsign
+FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:7445e6c2d2f732f15632940c08716f67edbd464b68009ce4ed412f017f21be4a AS cosign
+FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:789694814477e4ad4ca389a32bf8bce54c188242326dafed656d12988f6a6dcd AS gitsign
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:119ac25920c8bb50c8b5fd75dcbca369bf7d1f702b82f3d39663307890f0bf26
 ENV APP_ROOT=/opt/app-root
