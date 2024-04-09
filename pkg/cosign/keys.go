@@ -16,8 +16,10 @@
 package cosign
 
 import (
+	"bytes"
 	"crypto"
 	"crypto/ecdsa"
+	"github.com/ProtonMail/go-crypto/openpgp"
 	"crypto/ed25519"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -44,6 +46,7 @@ const (
 	// PEM-encoded ECDSA private key
 	ECPrivateKeyPemType = "EC PRIVATE KEY"
 	// PEM-encoded PKCS #8 RSA, ECDSA or ED25519 private key
+	GPGPrivateKey = "GPG PRIVATE KEY"
 	PrivateKeyPemType   = "PRIVATE KEY"
 	BundleKey           = static.BundleAnnotationKey
 	RFC3161TimestampKey = static.RFC3161TimestampAnnotationKey
@@ -81,7 +84,13 @@ func ImportKeyPair(keyPath string, pf PassFunc) (*KeysBytes, error) {
 		return nil, err
 	}
 
-	p, _ := pem.Decode(kb)
+	if keyPath == "test" {
+
+	}
+
+	//g , gerr := openpgp.ReadArmoredKeyRing(bytes.NewReader([]byte(kb)))
+	p,_:= pem.Decode(kb)
+
 	if p == nil {
 		return nil, fmt.Errorf("invalid pem block")
 	}
@@ -135,6 +144,66 @@ func ImportKeyPair(keyPath string, pf PassFunc) (*KeysBytes, error) {
 		return nil, fmt.Errorf("unsupported private key")
 	}
 	return marshalKeyPair(p.Type, Keys{pk, pk.Public()}, pf)
+}
+
+func ImportPgpKeyPair(pubKeyPath string, privKeyPath string, pf PassFunc) (*KeysBytes, error){
+	kb, err := os.ReadFile(filepath.Clean(pubKeyPath))
+	if err != nil {
+		return nil, err
+	}
+
+	c ,_:= openpgp.ReadArmoredKeyRing(bytes.NewReader(kb))
+
+	// Using the opengpg and packet packages to make a type switch case.
+	// This way we can detect what algortihmn is being used to genereate the key ring?
+	switch c[0].PrivateKey.PublicKey.PubKeyAlgo{
+	case RSAPrivateKeyPemType:
+		rsaPk, err := x509.ParsePKCS1PrivateKey(p.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing rsa private key: %w", err)
+		}
+		if err = cryptoutils.ValidatePubKey(rsaPk.Public()); err != nil {
+			return nil, fmt.Errorf("error validating rsa key: %w", err)
+		}
+		pk = rsaPk
+	case ECPrivateKeyPemType:
+		ecdsaPk, err := x509.ParseECPrivateKey(p.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing ecdsa private key")
+		}
+		if err = cryptoutils.ValidatePubKey(ecdsaPk.Public()); err != nil {
+			return nil, fmt.Errorf("error validating ecdsa key: %w", err)
+		}
+		pk = ecdsaPk
+	case PrivateKeyPemType:
+		pkcs8Pk, err := x509.ParsePKCS8PrivateKey(p.Bytes)
+		if err != nil {
+			return nil, fmt.Errorf("error parsing pkcs #8 private key")
+		}
+		switch k := pkcs8Pk.(type) {
+		case *rsa.PrivateKey:
+			if err = cryptoutils.ValidatePubKey(k.Public()); err != nil {
+				return nil, fmt.Errorf("error validating rsa key: %w", err)
+			}
+			pk = k
+		case *ecdsa.PrivateKey:
+			if err = cryptoutils.ValidatePubKey(k.Public()); err != nil {
+				return nil, fmt.Errorf("error validating ecdsa key: %w", err)
+			}
+			pk = k
+		case ed25519.PrivateKey:
+			if err = cryptoutils.ValidatePubKey(k.Public()); err != nil {
+				return nil, fmt.Errorf("error validating ed25519 key: %w", err)
+			}
+			pk = k
+		default:
+			return nil, fmt.Errorf("unexpected private key")
+		}
+	default:
+		return nil, fmt.Errorf("unsupported private key")
+	}
+	
+	return nil, fmt.Errorf("",err)
 }
 
 func marshalKeyPair(ptype string, keypair Keys, pf PassFunc) (key *KeysBytes, err error) {
