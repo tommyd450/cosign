@@ -1,7 +1,7 @@
 # Provides the Trusted Artifact Signer CLI binaries, cosign and gitsign
 
-FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:7445e6c2d2f732f15632940c08716f67edbd464b68009ce4ed412f017f21be4a AS cosign
-FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:789694814477e4ad4ca389a32bf8bce54c188242326dafed656d12988f6a6dcd AS gitsign
+FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:1295e3268dce50b2c8eb79fc3273aebdd03cabc964fdeabf4a06369c7d684eff AS cosign
+FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:5e4ae8d729afed06f04b00cf0958893ca6b79f3a4bed927043bf74bdd60ab152 AS gitsign
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:119ac25920c8bb50c8b5fd75dcbca369bf7d1f702b82f3d39663307890f0bf26
 ENV APP_ROOT=/opt/app-root
@@ -17,7 +17,7 @@ COPY --from=cosign /usr/local/bin/cosign-linux-amd64.gz   $APP_ROOT/src/clients/
 COPY --from=cosign /usr/local/bin/cosign-linux-arm64.gz   $APP_ROOT/src/clients/linux/cosign-arm64.gz
 COPY --from=cosign /usr/local/bin/cosign-linux-ppc64le.gz $APP_ROOT/src/clients/linux/cosign-ppc64le.gz
 COPY --from=cosign /usr/local/bin/cosign-linux-s390x.gz   $APP_ROOT/src/clients/linux/cosign-s390x.gz
-COPY --from=cosign /usr/local/bin/cosign-windows-amd64.gz $APP_ROOT/src/clients/windows/cosign-amd64.gz
+COPY --from=cosign /usr/local/bin/cosign-windows-amd64.exe.gz $APP_ROOT/src/clients/windows/cosign-amd64.gz
 
 COPY --from=gitsign /usr/local/bin/gitsign_cli_darwin_amd64.gz      $APP_ROOT/src/clients/darwin/gitsign-amd64.gz
 COPY --from=gitsign /usr/local/bin/gitsign_cli_darwin_arm64.gz      $APP_ROOT/src/clients/darwin/gitsign-arm64.gz
