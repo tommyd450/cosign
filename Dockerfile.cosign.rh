@@ -17,7 +17,7 @@ RUN git config --global --add safe.directory /cosign && \
     gzip cosign-linux-arm64 && \
     gzip cosign-darwin-amd64 && \
     gzip cosign-darwin-arm64 && \
-    gzip cosign-windows-amd64
+    gzip cosign-windows-amd64.exe
 
 # Install Cosign
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:119ac25920c8bb50c8b5fd75dcbca369bf7d1f702b82f3d39663307890f0bf26
@@ -30,7 +30,7 @@ LABEL summary="Provides the cosign CLI binary for signing and verifying containe
 LABEL com.redhat.component="cosign"
 
 COPY --from=build-env /cosign/cosign-darwin-amd64.gz /usr/local/bin/cosign-darwin-amd64.gz
-COPY --from=build-env /cosign/cosign-windows-amd64.gz /usr/local/bin/cosign-windows-amd64.gz
+COPY --from=build-env /cosign/cosign-windows-amd64.exe.gz /usr/local/bin/cosign-windows-amd64.exe.gz
 COPY --from=build-env /cosign/cosign-darwin-arm64.gz /usr/local/bin/cosign-darwin-arm64.gz
 COPY --from=build-env /cosign/cosign-linux-arm64.gz /usr/local/bin/cosign-linux-arm64.gz
 COPY --from=build-env /cosign/cosign-linux-ppc64le.gz /usr/local/bin/cosign-linux-ppc64le.gz
@@ -42,7 +42,7 @@ RUN chown root:0 /usr/local/bin/cosign && \
     chmod g+wx /usr/local/bin/cosign && \
     chown root:0 /usr/local/bin/cosign-darwin-amd64.gz && chmod g+wx /usr/local/bin/cosign-darwin-amd64.gz && \
     chown root:0 /usr/local/bin/cosign-darwin-arm64.gz && chmod g+wx /usr/local/bin/cosign-darwin-arm64.gz && \
-    chown root:0 /usr/local/bin/cosign-windows-amd64.gz && chmod g+wx /usr/local/bin/cosign-windows-amd64.gz && \
+    chown root:0 /usr/local/bin/cosign-windows-amd64.exe.gz && chmod g+wx /usr/local/bin/cosign-windows-amd64.exe.gz && \
     chown root:0 /usr/local/bin/cosign-linux-arm64.gz && chmod g+wx /usr/local/bin/cosign-linux-arm64.gz && \
     chown root:0 /usr/local/bin/cosign-linux-amd64.gz && chmod g+wx /usr/local/bin/cosign-linux-amd64.gz && \
     chown root:0 /usr/local/bin/cosign-linux-ppc64le.gz && chmod g+wx /usr/local/bin/cosign-linux-ppc64le.gz && \
