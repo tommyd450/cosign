@@ -27,7 +27,7 @@ COPY --from=ec /usr/local/bin/ec_linux_amd64.gz       $APP_ROOT/src/clients/linu
 COPY --from=ec /usr/local/bin/ec_linux_arm64.gz       $APP_ROOT/src/clients/linux/ec-arm64.gz
 COPY --from=ec /usr/local/bin/ec_linux_ppc64le.gz     $APP_ROOT/src/clients/linux/ec-ppc64le.gz
 COPY --from=ec /usr/local/bin/ec_linux_s390x.gz       $APP_ROOT/src/clients/linux/ec-s390x.gz
-COPY --from=ec /usr/local/bin/ec_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/ec-usr/usr/usr/usr/usr/local/bin
+COPY --from=ec /usr/local/bin/ec_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/ec-amd64.gz
 
 LABEL \
       com.redhat.component="trusted-artifact-signer-serve-cli-container-re" \
