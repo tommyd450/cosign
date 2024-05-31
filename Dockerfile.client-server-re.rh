@@ -4,7 +4,7 @@
 FROM quay.io/redhat-user-workloads/rhtas-tenant/rekor/rekor-cli@sha256:5c56a63e98d90f6d6974dbb297dda9f1a0892aac46fbb4307b3b14b01cc758dc as rekor
 FROM quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v02/cli-v02@sha256:5624cb2a696679f82f25ae95be40b138eda1bf071b6fcd9177b7cd2da4ae7aa5 as ec
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:cb6f20b9225031c8d704af95932c0331cfe0b229cd5b3dd805681d92a439186e
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:adbac3083c2f340bee7cce4563665a1555901bee048bca6842b4fa0a1e6b875b
 
 ENV APP_ROOT=/opt/app-root
 WORKDIR $APP_ROOT/src/
