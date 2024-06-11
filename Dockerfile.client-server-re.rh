@@ -2,7 +2,7 @@
 
 
 FROM quay.io/redhat-user-workloads/rhtas-tenant/rekor/rekor-cli@sha256:5c56a63e98d90f6d6974dbb297dda9f1a0892aac46fbb4307b3b14b01cc758dc as rekor
-FROM quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v02/cli-v02@sha256:5624cb2a696679f82f25ae95be40b138eda1bf071b6fcd9177b7cd2da4ae7aa5 as ec
+FROM quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v04/cli-v04@sha256:8c766da37d73bf07ecdd9154b64a6525e4f5ed55321b4871dc370a31e488fd18 as ec
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:29790f898839e92c0554d031856e1770254f27e66af593fc088fbb7d3e5e298e
 
