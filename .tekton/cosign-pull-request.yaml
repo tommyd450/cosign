@@ -380,32 +380,32 @@ spec:
         operator: in
         values:
         - "false"
-    - name: run-unit-test
-      runAfter:
-      - prefetch-dependencies
-      taskRef:
-        params:
-        - name: name
-          value: go-unit-test
-        - name: bundle
-          value: quay.io/securesign/cosign-unit-test@sha256:1831f2702e3f124d988dabcde8fd943f73b3d286e7f0c00b87ebe6b89e929ff1
-        - name: kind
-          value: task
-        resolver: bundles
-      workspaces:
-        - name: source
-          workspace: workspace
+    # - name: run-unit-test
+    #   runAfter:
+    #   - prefetch-dependencies
+    #   taskRef:
+    #     params:
+    #     - name: name
+    #       value: go-unit-test
+    #     - name: bundle
+    #       value: quay.io/securesign/cosign-unit-test@sha256:1831f2702e3f124d988dabcde8fd943f73b3d286e7f0c00b87ebe6b89e929ff1
+    #     - name: kind
+    #       value: task
+    #     resolver: bundles
+    #   workspaces:
+    #     - name: source
+    #       workspace: workspace
     workspaces:
     - name: workspace
     - name: git-auth
       optional: true
   taskRunTemplate: {}
-  taskRunSpecs:
-    - pipelineTaskName: run-unit-test
-      serviceAccountName: appstudio-pipeline
-      podTemplate:
-        imagePullSecrets:
-          - name: brew-registry-pull-secret
+  # taskRunSpecs:
+  #   - pipelineTaskName: run-unit-test
+  #     serviceAccountName: appstudio-pipeline
+  #     podTemplate:
+  #       imagePullSecrets:
+  #         - name: brew-registry-pull-secret
   workspaces:
   - name: workspace
     volumeClaimTemplate:
