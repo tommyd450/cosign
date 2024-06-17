@@ -3,7 +3,7 @@
 FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:89ddb6a19d5d2167ccd923e5da37f672a292ae4ab97320320cc348957a976fcd AS cosign
 FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:4b1b0c86534c0a41fcce9386f547460525916815e1a783cdc7a53468d57d796c AS gitsign
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:29790f898839e92c0554d031856e1770254f27e66af593fc088fbb7d3e5e298e
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:82fad27b91361473d919522a01a1198f327230bf8d2b569a8995bdcd6ac7cb94
 ENV APP_ROOT=/opt/app-root
 WORKDIR $APP_ROOT/src/
 
