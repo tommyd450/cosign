@@ -1,0 +1,29 @@
+# Provides the Trusted Artifact Signer CLI binary, fetch-tsa-certs
+FROM quay.io/securesign/fetch-tsa-certs@sha256:04ee10dd6f36b7ebca80c0e7badeb5c69d4ae2b37eb1abbea204d1af4eb1d0cc as fetch_tsa_certs
+
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:73f7dcacb460dad137a58f24668470a5a2e47378838a0190eef0ab532c6e8998
+ENV APP_ROOT=/opt/app-root
+WORKDIR $APP_ROOT/src/
+
+RUN mkdir -p $APP_ROOT/src/clients/darwin && \
+    mkdir -p $APP_ROOT/src/clients/linux && \
+    mkdir -p $APP_ROOT/src/clients/windows
+
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_darwin_arm64.gz  $APP_ROOT/src/clients/darwin/fetch-tsa-certs-arm64.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_darwin_amd64.gz  $APP_ROOT/src/clients/darwin/fetch-tsa-certs-amd64.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_linux_amd64.gz  $APP_ROOT/src/clients/linux/fetch-tsa-certs-amd64.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_linux_arm64.gz  $APP_ROOT/src/clients/linux/fetch-tsa-certs-arm64.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_linux_ppc64le.gz $APP_ROOT/src/clients/linux/fetch-tsa-certs-ppc64le.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_linux_s390x.gz   $APP_ROOT/src/clients/linux/fetch-tsa-certs-s390x.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_windows_amd64.exe.gz $APP_ROOT/src/clients/windows/fetch-tsa-certs-amd64.gz
+
+LABEL \
+    com.redhat.component="trusted-artifact-signer-serve-cli-container-f" \
+    name="trusted-artifact-signer-serve-cli-container-f" \
+    version="1.1.0" \
+    summary="Red Hat serves Trusted Artifact Signer CLI binary fetch-tsa-certs" \
+    description="Serves Trusted Artifact Signer CLI binary fetch-tsa-certs, from an HTTP server" \
+    io.k8s.description="Serves Trusted Artifact Signer CLI binary fetch-tsa-certs, from an HTTP server" \
+    io.k8s.display-name="Red Hat serves Trusted Artifact Signer CLI binary fetch-tsa-certs" \
+    io.openshift.tags="timestamp authority, fetch-tsa-certs, rhtas, trusted, artifact, signer, sigstore" \
+    maintainer="trusted-artifact-signer@redhat.com"

@@ -1,7 +1,7 @@
 # Provides the Trusted Artifact Signer CLI binaries, cosign and gitsign
 
-FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/cosign@sha256:0d9af9e0bececb32d90de9f74fbc2bb4622af2fcebf862de0bdfd40a19192fdc AS cosign
-FROM quay.io/redhat-user-workloads/rhtas-tenant/cli/gitsign@sha256:5b14542b2e0288c9f3dffe8e70891510846573ffca5113291157c603983b2c4c AS gitsign
+FROM quay.io/securesign/cli-cosign@sha256:c0187868dbf5c7dcaa545a07a194ef90b50655df497db3f7f0de0a3c4eaa41f7 AS cosign
+FROM quay.io/securesign/gitsign@sha256:3229dc9d5bad1344663ac92a980eb6abcd5715dc3812a20a2129f60b885ececf AS gitsign
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:82fad27b91361473d919522a01a1198f327230bf8d2b569a8995bdcd6ac7cb94
 ENV APP_ROOT=/opt/app-root
@@ -31,7 +31,7 @@ COPY --from=gitsign /usr/local/bin/gitsign_cli_windows_amd64.exe.gz $APP_ROOT/sr
 LABEL \
       com.redhat.component="trusted-artifact-signer-serve-cli-container-cg" \
       name="trusted-artifact-signer-serve-cli-container-cg" \
-      version="1.0.0" \
+      version="1.1.0" \
       summary="Red Hat serves Trusted Artifact Signer CLI binaries, cosign and gitsign" \
       description="Serves Trusted Artifact Signer CLI binaries, cosign and gitsign, from an HTTP server" \
       io.k8s.description="Serves Trusted Artifact Signer CLI binaries, cosign and gitsign, from an HTTP server" \
