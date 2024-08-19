@@ -13,7 +13,7 @@ FROM quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v04/cli-v04@sha256:0
 FROM quay.io/securesign/trillian-createtree@sha256:2a17108678e51bf39d80b3a7fc577ec9c12de10e19286e3e5298fb8cfcf9309c as trillian-createtree
 FROM quay.io/securesign/trillian-updatetree@sha256:cae560a63bc4f6aae4c8d5110ca903f52518be7b7db34ddebf29a541f04c6c45 as trillian-updatetree
 
-FROM registry.access.redhat.com/ubi9/httpd-24@sha256:f6a99e33d5044e6214578a5824d069de4086f70e50e7b856c3cfce1819150ec9
+FROM registry.access.redhat.com/ubi9/httpd-24@sha256:748c5e58b6ebb9f1b1d817cec107fdc6163a6db0c0abb618d24c7b779aecb71e
 ENV APP_ROOT=/opt/app-root
 WORKDIR $APP_ROOT/src/
 
