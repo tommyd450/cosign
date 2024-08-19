@@ -1,0 +1,96 @@
+# Provides the Trusted Artifact Signer CLI binaries, cosign and gitsign
+FROM quay.io/securesign/cli-cosign@sha256:c0187868dbf5c7dcaa545a07a194ef90b50655df497db3f7f0de0a3c4eaa41f7 AS cosign
+FROM quay.io/securesign/gitsign@sha256:3229dc9d5bad1344663ac92a980eb6abcd5715dc3812a20a2129f60b885ececf AS gitsign
+
+# Provides the Trusted Artifact Signer CLI binary, fetch-tsa-certs
+FROM quay.io/securesign/fetch-tsa-certs@sha256:04ee10dd6f36b7ebca80c0e7badeb5c69d4ae2b37eb1abbea204d1af4eb1d0cc as fetch_tsa_certs
+
+# Provides the Trusted Artifact Signer CLI binaries, rekor-cli and ec
+FROM quay.io/securesign/rekor-cli@sha256:285603d7aba24ecd88d98afb20807968a12557fd33a31c52b57df528c3cf57c4 as rekor
+FROM quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v04/cli-v04@sha256:013fed3832c831cfa45ecad66ba335ebb0438ade168174d474c0ed1ac3c2c59c as ec
+
+# Provides the Trusted Artifact Signer CLI binaries trillian-createtree and trillian-updatetree
+FROM quay.io/securesign/trillian-createtree@sha256:2a17108678e51bf39d80b3a7fc577ec9c12de10e19286e3e5298fb8cfcf9309c as trillian-createtree
+FROM quay.io/securesign/trillian-updatetree@sha256:cae560a63bc4f6aae4c8d5110ca903f52518be7b7db34ddebf29a541f04c6c45 as trillian-updatetree
+
+FROM registry.access.redhat.com/ubi9/httpd-24@sha256:f6a99e33d5044e6214578a5824d069de4086f70e50e7b856c3cfce1819150ec9
+ENV APP_ROOT=/opt/app-root
+WORKDIR $APP_ROOT/src/
+
+RUN mkdir -p "/var/www/html/clients/darwin" && \
+    mkdir -p "/var/www/html/clients/linux" && \
+    mkdir -p "/var/www/html/clients/windows"
+
+# Copy the cosign binaries from the previous stages
+COPY --from=cosign /usr/local/bin/cosign-darwin-amd64.gz  /var/www/html/clients/darwin/cosign-amd64.gz
+COPY --from=cosign /usr/local/bin/cosign-darwin-arm64.gz  /var/www/html/clients/darwin/cosign-arm64.gz
+COPY --from=cosign /usr/local/bin/cosign-linux-amd64.gz   /var/www/html/clients/linux/cosign-amd64.gz
+COPY --from=cosign /usr/local/bin/cosign-linux-arm64.gz   /var/www/html/clients/linux/cosign-arm64.gz
+COPY --from=cosign /usr/local/bin/cosign-linux-ppc64le.gz /var/www/html/clients/linux/cosign-ppc64le.gz
+COPY --from=cosign /usr/local/bin/cosign-linux-s390x.gz   /var/www/html/clients/linux/cosign-s390x.gz
+COPY --from=cosign /usr/local/bin/cosign-windows-amd64.exe.gz /var/www/html/clients/windows/cosign-amd64.gz
+
+# Copy the gitsign binaries from the previous stages
+COPY --from=gitsign /usr/local/bin/gitsign_cli_darwin_amd64.gz      /var/www/html/clients/darwin/gitsign-amd64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_darwin_arm64.gz      /var/www/html/clients/darwin/gitsign-arm64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_linux_amd64.gz       /var/www/html/clients/linux/gitsign-amd64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_linux_arm64.gz       /var/www/html/clients/linux/gitsign-arm64.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_linux_ppc64le.gz     /var/www/html/clients/linux/gitsign-ppc64le.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_linux_s390x.gz       /var/www/html/clients/linux/gitsign-s390x.gz
+COPY --from=gitsign /usr/local/bin/gitsign_cli_windows_amd64.exe.gz /var/www/html/clients/windows/gitsign-amd64.gz
+
+# Copy the rekor binaries from the previous stages
+COPY --from=rekor /usr/local/bin/rekor_cli_darwin_amd64.gz      /var/www/html/clients/darwin/rekor-cli-amd64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_darwin_arm64.gz      /var/www/html/clients/darwin/rekor-cli-arm64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_linux_amd64.gz       /var/www/html/clients/linux/rekor-cli-amd64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_linux_arm64.gz       /var/www/html/clients/linux/rekor-cli-arm64.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_linux_ppc64le.gz     /var/www/html/clients/linux/rekor-cli-ppc64le.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_linux_s390x.gz       /var/www/html/clients/linux/rekor-cli-s390x.gz
+COPY --from=rekor /usr/local/bin/rekor_cli_windows_amd64.exe.gz /var/www/html/clients/windows/rekor-cli-amd64.gz
+
+# Copy the ec binaries from the previous stages
+COPY --from=ec /usr/local/bin/ec_darwin_amd64.gz      /var/www/html/clients/darwin/ec-amd64.gz
+COPY --from=ec /usr/local/bin/ec_darwin_arm64.gz      /var/www/html/clients/darwin/ec-arm64.gz
+COPY --from=ec /usr/local/bin/ec_linux_amd64.gz       /var/www/html/clients/linux/ec-amd64.gz
+COPY --from=ec /usr/local/bin/ec_linux_arm64.gz       /var/www/html/clients/linux/ec-arm64.gz
+COPY --from=ec /usr/local/bin/ec_linux_ppc64le.gz     /var/www/html/clients/linux/ec-ppc64le.gz
+COPY --from=ec /usr/local/bin/ec_linux_s390x.gz       /var/www/html/clients/linux/ec-s390x.gz
+COPY --from=ec /usr/local/bin/ec_windows_amd64.exe.gz /var/www/html/clients/windows/ec-amd64.gz
+
+# Copy the fetch-tsa-certs binaries from the previous stages
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_darwin_arm64.gz  /var/www/html/clients/darwin/fetch-tsa-certs-arm64.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_darwin_amd64.gz  /var/www/html/clients/darwin/fetch-tsa-certs-amd64.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_linux_amd64.gz  /var/www/html/clients/linux/fetch-tsa-certs-amd64.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_linux_arm64.gz  /var/www/html/clients/linux/fetch-tsa-certs-arm64.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_linux_ppc64le.gz /var/www/html/clients/linux/fetch-tsa-certs-ppc64le.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_linux_s390x.gz   /var/www/html/clients/linux/fetch-tsa-certs-s390x.gz
+COPY --from=fetch_tsa_certs /usr/local/bin/fetch_tsa_certs_windows_amd64.exe.gz /var/www/html/clients/windows/fetch-tsa-certs-amd64.gz
+
+# Copy the trillian-createtree binaries from the previous stages
+COPY --from=trillian-createtree /usr/local/bin/createtree-darwin-arm64.gz  /var/www/html/clients/darwin/createtree-arm64.gz
+COPY --from=trillian-createtree /usr/local/bin/createtree-darwin-amd64.gz  /var/www/html/clients/darwin/createtree-amd64.gz
+COPY --from=trillian-createtree /usr/local/bin/createtree-linux-amd64.gz  /var/www/html/clients/linux/createtree-amd64.gz
+COPY --from=trillian-createtree /usr/local/bin/createtree-linux-arm64.gz  /var/www/html/clients/linux/createtree-arm64.gz
+COPY --from=trillian-createtree /usr/local/bin/createtree-linux-ppc64le.gz /var/www/html/clients/linux/createtree-ppc64le.gz
+COPY --from=trillian-createtree /usr/local/bin/createtree-linux-s390x.gz   /var/www/html/clients/linux/createtree-s390x.gz
+COPY --from=trillian-createtree /usr/local/bin/createtree-windows-amd64.exe.gz /var/www/html/clients/windows/createtree-amd64.gz
+
+# Copy the trillian-updatetree binaries from the previous stages
+COPY --from=trillian-updatetree /usr/local/bin/updatetree-darwin-arm64.gz  /var/www/html/clients/darwin/updatetree-arm64.gz
+COPY --from=trillian-updatetree /usr/local/bin/updatetree-darwin-amd64.gz  /var/www/html/clients/darwin/updatetree-amd64.gz
+COPY --from=trillian-updatetree /usr/local/bin/updatetree-linux-amd64.gz  /var/www/html/clients/linux/updatetree-amd64.gz
+COPY --from=trillian-updatetree /usr/local/bin/updatetree-linux-arm64.gz  /var/www/html/clients/linux/updatetree-arm64.gz
+COPY --from=trillian-updatetree /usr/local/bin/updatetree-linux-ppc64le.gz /var/www/html/clients/linux/updatetree-ppc64le.gz
+COPY --from=trillian-updatetree /usr/local/bin/updatetree-linux-s390x.gz   /var/www/html/clients/linux/updatetree-s390x.gz
+COPY --from=trillian-updatetree /usr/local/bin/updatetree-windows-amd64.exe.gz /var/www/html/clients/windows/updatetree-amd64.gz
+
+LABEL \
+      com.redhat.component="trusted-artifact-signer-serve-cli-container" \
+      name="trusted-artifact-signer-serve-cli-container" \
+      version="1.1.0" \
+      summary="Red Hat serves Trusted Artifact Signer CLI binaries cosign, gitsign, rekor-cli, ec, fetch_tsa_certs, trillian-createtree and trillian-updatetree from an HTTP server" \
+      description="Serves Trusted Artifact Signer CLI binaries cosign, gitsign, rekor-cli, ec, fetch_tsa_certs, trillian-createtree and trillian-updatetree from an HTTP server" \
+      io.k8s.description="Serves Trusted Artifact Signer CLI binaries cosign, gitsign, rekor-cli, ec, fetch_tsa_certs, trillian-createtree and trillian-updatetree from an HTTP server" \
+      io.k8s.display-name="Red Hat serves Trusted Artifact Signer CLI binaries cosign, gitsign, rekor-cli, ec, fetch_tsa_certs, trillian-createtree and trillian-updatetree" \
+      io.openshift.tags=" cosign, gitsign, rekor-cli, ec, fetch_tsa_certs, trillian-createtree and trillian-updatetree, rhtas, trusted, artifact, signer, sigstore" \
+      maintainer="trusted-artifact-signer@redhat.com"
