@@ -1,6 +1,6 @@
 # Provides the Trusted Artifact Signer CLI binaries, cosign and gitsign
 
-FROM quay.io/securesign/cli-cosign@sha256:c0187868dbf5c7dcaa545a07a194ef90b50655df497db3f7f0de0a3c4eaa41f7 AS cosign
+FROM quay.io/securesign/cli-cosign@sha256:4ec69652b96c3cfddc813c42a763d81dc82f894c745a33e99deaa92814f4e918 AS cosign
 FROM quay.io/securesign/gitsign@sha256:7b48bc6d16ba28956ad932c2c0c9a62586ebd5088579b5518b78134be95c1882 AS gitsign
 
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:73f7dcacb460dad137a58f24668470a5a2e47378838a0190eef0ab532c6e8998
