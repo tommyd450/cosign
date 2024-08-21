@@ -28,6 +28,10 @@ spec:
     value: 5d
   - name: dockerfile
     value: Dockerfile.clients.rh
+  - name: hermetic
+    value: "true"
+  - name: build-source-image
+    value: "true"
   pipelineSpec:
     finally:
     - name: show-sbom
@@ -199,10 +203,10 @@ spec:
           value: task
         resolver: bundles
       when:
-      - input: $(params.prefetch-input)
-        operator: notin
+      - input: $(params.hermetic)
+        operator: in
         values:
-        - ""
+        - "true"
       workspaces:
       - name: source
         workspace: workspace
