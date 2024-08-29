@@ -310,6 +310,10 @@ spec:
         values:
         - "false"
       params:
+      - name: image-digest
+        value: $(tasks.build-container.results.IMAGE_DIGEST)
+      - name: image-url
+        value: $(tasks.build-container.results.IMAGE_URL)
       - name: SOURCE_ARTIFACT
         value: $(tasks.prefetch-dependencies.results.SOURCE_ARTIFACT)
     - name: clamav-scan
@@ -361,7 +365,7 @@ spec:
       - prefetch-dependencies
       taskRef:
         name: go-unit-test
-      params:
+        params:
         - name: SOURCE_ARTIFACT
           value: $(tasks.prefetch-dependencies.results.SOURCE_ARTIFACT)
         - name: CACHI2_ARTIFACT

@@ -45,7 +45,3 @@ spec:
       emptyDir: {}
     - name: cachi2
       emptyDir: {}
-
-# This file bundles the unit tests for cosign. 
-# If any changes are made to this file, it must be pushed to Quay using the following command:
-# 'tkn bundle push quay.io/securesign/cosign-unit-test:latest-GA -f .tekton/cosign-unit-test.yaml'.
