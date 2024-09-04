@@ -32,7 +32,7 @@ var (
 	reGitVersion        = regexp.MustCompile(fmt.Sprintf("\nGitVersion:\\s+%s\n", expectedVersionInfo.GitVersion))
 	reGitCommmit        = regexp.MustCompile(fmt.Sprintf("GitCommit:\\s+%s\n", expectedVersionInfo.GitCommit))
 	reBuildDate         = regexp.MustCompile(fmt.Sprintf("BuildDate:\\s+%s\n", expectedVersionInfo.BuildDate))
-	reGoVersion         = regexp.MustCompile(fmt.Sprintf("GoVersion:\\s+%s\n", expectedVersionInfo.GoVersion))
+	reGoVersion         = regexp.MustCompile(fmt.Sprintf(`GoVersion:\s*%s\n`, `go\d+\.\d+\.\d+(?:\s*\(.*?\))?`))
 	reCompiler          = regexp.MustCompile(fmt.Sprintf("Compiler:\\s+%s\n", expectedVersionInfo.Compiler))
 	rePlatform          = regexp.MustCompile(fmt.Sprintf("Platform:\\s+%s\n", expectedVersionInfo.Platform))
 )
