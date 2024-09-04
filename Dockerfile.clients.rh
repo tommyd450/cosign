@@ -1,12 +1,12 @@
 # Provides the Trusted Artifact Signer CLI binaries, cosign and gitsign
 FROM quay.io/securesign/cli-cosign@sha256:4ec69652b96c3cfddc813c42a763d81dc82f894c745a33e99deaa92814f4e918 AS cosign
-FROM quay.io/securesign/gitsign@sha256:3229dc9d5bad1344663ac92a980eb6abcd5715dc3812a20a2129f60b885ececf AS gitsign
+FROM quay.io/securesign/gitsign@sha256:26288a765783d5c0ee93c5150523eca7610a021d9725494d4373f0529a2fee29 AS gitsign
 
 # Provides the Trusted Artifact Signer CLI binary, fetch-tsa-certs
 FROM quay.io/securesign/fetch-tsa-certs@sha256:04ee10dd6f36b7ebca80c0e7badeb5c69d4ae2b37eb1abbea204d1af4eb1d0cc as fetch_tsa_certs
 
 # Provides the Trusted Artifact Signer CLI binaries, rekor-cli and ec
-FROM quay.io/securesign/rekor-cli@sha256:285603d7aba24ecd88d98afb20807968a12557fd33a31c52b57df528c3cf57c4 as rekor
+FROM quay.io/securesign/rekor-cli@sha256:0f874a33e5ee36ed6cdb080e1774a6d66d3c095458f8a138b5c0f95fd8f32944 as rekor
 FROM quay.io/redhat-user-workloads/rhtap-contract-tenant/ec-v04/cli-v04@sha256:013fed3832c831cfa45ecad66ba335ebb0438ade168174d474c0ed1ac3c2c59c as ec
 
 # Provides the Trusted Artifact Signer CLI binaries trillian-createtree and trillian-updatetree
