@@ -30,10 +30,14 @@ on:
 env:
   CODEQL_EXTRACTOR_GO_BUILD_TRACING: true
 
+permissions: {}
+
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
+
+    if: github.repository == 'sigstore/cosign'
 
     permissions:
       security-events: write
@@ -47,7 +51,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     - name: Utilize Go Module Cache
       uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
@@ -60,9 +64,9 @@ jobs:
           ${{ runner.os }}-go-
 
     - name: Set correct version of Golang to use during CodeQL run
-      uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+      uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
       with:
-        go-version: '1.21'
+        go-version: '1.22'
         check-latest: true
 
     # Initializes the CodeQL tools for scanning.

@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build e2e && !cross
+//go:build e2e && !cross && !kms && !registry
 
 package test
 
@@ -123,6 +123,67 @@ func TestSignVerify(t *testing.T) {
 	mustErr(verify(pubKeyPath, imgName, true, map[string]interface{}{"foo": "bar", "baz": "bat"}, "", false), t)
 }
 
+func TestSignVerifyCertBundle(t *testing.T) {
+	td := t.TempDir()
+	err := downloadAndSetEnv(t, rekorURL+"/api/v1/log/publicKey", env.VariableSigstoreRekorPublicKey.String(), td)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	repo, stop := reg(t)
+	defer stop()
+
+	imgName := path.Join(repo, "cosign-e2e")
+
+	_, _, cleanup := mkimage(t, imgName)
+	defer cleanup()
+
+	_, privKeyPath, pubKeyPath := keypair(t, td)
+	caCertFile, _ /* caPrivKeyFile */, caIntermediateCertFile, _ /* caIntermediatePrivKeyFile */, certFile, certChainFile, err := generateCertificateBundleFiles(td, true, "foobar")
+	must(err, t)
+
+	ctx := context.Background()
+	// Verify should fail at first
+	mustErr(verifyCertBundle(pubKeyPath, caCertFile, caIntermediateCertFile, imgName, true, nil, "", true), t)
+	// So should download
+	mustErr(download.SignatureCmd(ctx, options.RegistryOptions{}, imgName), t)
+
+	// Now sign the image
+	ko := options.KeyOpts{
+		KeyRef:           privKeyPath,
+		PassFunc:         passFunc,
+		RekorURL:         rekorURL,
+		SkipConfirmation: true,
+	}
+	so := options.SignOptions{
+		Upload:     true,
+		TlogUpload: true,
+	}
+	must(sign.SignCmd(ro, ko, so, []string{imgName}), t)
+
+	// Now verify and download should work!
+	ignoreTlog := true
+	must(verifyCertBundle(pubKeyPath, caCertFile, caIntermediateCertFile, imgName, true, nil, "", ignoreTlog), t)
+	// verification with certificate chain instead of root/intermediate files should work as well
+	must(verifyCertChain(pubKeyPath, certChainFile, certFile, imgName, true, nil, "", ignoreTlog), t)
+	must(download.SignatureCmd(ctx, options.RegistryOptions{}, imgName), t)
+
+	// Look for a specific annotation
+	mustErr(verifyCertBundle(pubKeyPath, caCertFile, caIntermediateCertFile, imgName, true, map[string]interface{}{"foo": "bar"}, "", ignoreTlog), t)
+
+	so.AnnotationOptions = options.AnnotationOptions{
+		Annotations: []string{"foo=bar"},
+	}
+	// Sign the image with an annotation
+	must(sign.SignCmd(ro, ko, so, []string{imgName}), t)
+
+	// It should match this time.
+	must(verifyCertBundle(pubKeyPath, caCertFile, caIntermediateCertFile, imgName, true, map[string]interface{}{"foo": "bar"}, "", ignoreTlog), t)
+
+	// But two doesn't work
+	mustErr(verifyCertBundle(pubKeyPath, caCertFile, caIntermediateCertFile, imgName, true, map[string]interface{}{"foo": "bar", "baz": "bat"}, "", ignoreTlog), t)
+}
+
 func TestSignVerifyClean(t *testing.T) {
 	td := t.TempDir()
 	err := downloadAndSetEnv(t, rekorURL+"/api/v1/log/publicKey", env.VariableSigstoreRekorPublicKey.String(), td)
@@ -179,7 +240,7 @@ func TestImportSignVerifyClean(t *testing.T) {
 
 	_, _, _ = mkimage(t, imgName)
 
-	_, privKeyPath, pubKeyPath := importKeyPair(t, td)
+	_, privKeyPath, pubKeyPath := importSampleKeyPair(t, td)
 
 	ctx := context.Background()
 
@@ -548,7 +609,7 @@ func TestAttestationDownloadWithBadPredicateType(t *testing.T) {
 	}
 	must(attestCommand.Exec(ctx, imgName), t)
 
-	// Call download.AttestationCmd() to ensure failure with non-existant --predicate-type
+	// Call download.AttestationCmd() to ensure failure with non-existent --predicate-type
 	attOpts := options.AttestationDownloadOptions{
 		PredicateType: "vuln",
 	}
@@ -789,6 +850,246 @@ func TestAttestationRFC3161Timestamp(t *testing.T) {
 	}
 
 	must(verifyAttestation.Exec(ctx, []string{imgName}), t)
+}
+
+func TestVerifyWithCARoots(t *testing.T) {
+	ctx := context.Background()
+	// TSA server needed to create timestamp
+	viper.Set("timestamp-signer", "memory")
+	viper.Set("timestamp-signer-hash", "sha256")
+	apiServer := server.NewRestAPIServer("localhost", 0, []string{"http"}, false, 10*time.Second, 10*time.Second)
+	server := httptest.NewServer(apiServer.GetHandler())
+	t.Cleanup(server.Close)
+
+	repo, stop := reg(t)
+	defer stop()
+	td := t.TempDir()
+
+	imgName := path.Join(repo, "cosign-verify-caroots-e2e")
+	_, _, cleanup := mkimage(t, imgName)
+	defer cleanup()
+	blob := "someblob2sign"
+
+	b := bytes.Buffer{}
+	blobRef := filepath.Join(td, blob)
+	if err := os.WriteFile(blobRef, []byte(blob), 0644); err != nil {
+		t.Fatal(err)
+	}
+	must(generate.GenerateCmd(context.Background(), options.RegistryOptions{}, imgName, nil, &b), t)
+
+	rootCert, rootKey, _ := GenerateRootCa()
+	subCert, subKey, _ := GenerateSubordinateCa(rootCert, rootKey)
+	leafCert, privKey, _ := GenerateLeafCert("subject@mail.com", "oidc-issuer", subCert, subKey)
+	privKeyRef := importECDSAPrivateKey(t, privKey, td, "cosign-test-key.pem")
+	pemRoot := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: rootCert.Raw})
+	pemSub := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: subCert.Raw})
+	pemLeaf := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: leafCert.Raw})
+
+	rootCert02, rootKey02, _ := GenerateRootCa()
+	subCert02, subKey02, _ := GenerateSubordinateCa(rootCert02, rootKey02)
+	leafCert02, _, _ := GenerateLeafCert("subject02@mail.com", "oidc-issuer02", subCert02, subKey02)
+	pemRoot02 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: rootCert02.Raw})
+	pemSub02 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: subCert02.Raw})
+	pemLeaf02 := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: leafCert02.Raw})
+	pemsubRef02 := mkfile(string(pemSub02), td, t)
+	pemrootRef02 := mkfile(string(pemRoot02), td, t)
+	pemleafRef02 := mkfile(string(pemLeaf02), td, t)
+
+	rootPool := x509.NewCertPool()
+	rootPool.AddCert(rootCert)
+
+	payloadref := mkfile(b.String(), td, t)
+
+	h := sha256.Sum256(b.Bytes())
+	signature, _ := privKey.Sign(rand.Reader, h[:], crypto.SHA256)
+	b64signature := base64.StdEncoding.EncodeToString(signature)
+	sigRef := mkfile(b64signature, td, t)
+	pemsubRef := mkfile(string(pemSub), td, t)
+	pemrootRef := mkfile(string(pemRoot), td, t)
+	pemleafRef := mkfile(string(pemLeaf), td, t)
+	certchainRef := mkfile(string(append(pemSub, pemRoot...)), td, t)
+
+	pemrootBundleRef := mkfile(string(append(pemRoot, pemRoot02...)), td, t)
+	pemsubBundleRef := mkfile(string(append(pemSub, pemSub02...)), td, t)
+
+	tsclient, err := tsaclient.GetTimestampClient(server.URL)
+	if err != nil {
+		t.Error(err)
+	}
+
+	chain, err := tsclient.Timestamp.GetTimestampCertChain(nil)
+	if err != nil {
+		t.Fatalf("unexpected error getting timestamp chain: %v", err)
+	}
+
+	tsaChainRef, err := os.CreateTemp(os.TempDir(), "tempfile")
+	if err != nil {
+		t.Fatalf("error creating temp file: %v", err)
+	}
+	defer os.Remove(tsaChainRef.Name())
+	_, err = tsaChainRef.WriteString(chain.Payload)
+	if err != nil {
+		t.Fatalf("error writing chain payload to temp file: %v", err)
+	}
+
+	tsBytes, err := tsa.GetTimestampedSignature(signature, client.NewTSAClient(server.URL+"/api/v1/timestamp"))
+	if err != nil {
+		t.Fatalf("unexpected error creating timestamp: %v", err)
+	}
+	rfc3161TSRef := mkfile(string(tsBytes), td, t)
+
+	// Upload it!
+	err = attach.SignatureCmd(ctx, options.RegistryOptions{}, sigRef, payloadref, pemleafRef, certchainRef, rfc3161TSRef, "", imgName)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Now sign the blob with one key
+	ko := options.KeyOpts{
+		KeyRef:   privKeyRef,
+		PassFunc: passFunc,
+	}
+	blobSig, err := sign.SignBlobCmd(ro, ko, blobRef, true, "", "", false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	// the following fields with non-changing values are logically "factored out" for brevity
+	// and passed to verifyKeylessTSAWithCARoots in the testing loop:
+	// imageName string
+	// tsaCertChainRef string
+	// skipSCT   bool
+	// skipTlogVerify bool
+	tests := []struct {
+		name      string
+		rootRef   string
+		subRef    string
+		leafRef   string
+		skipBlob  bool // skip the verify-blob test (for cases that need the image)
+		wantError bool
+	}{
+		{
+			"verify with root, intermediate and leaf certificates",
+			pemrootRef,
+			pemsubRef,
+			pemleafRef,
+			false,
+			false,
+		},
+		// NB - "confusely" switching the root and intermediate PEM files does _NOT_ (currently) produce an error
+		// - the Go crypto/x509 package doesn't strictly verify that the certificate chain is anchored
+		// in a self-signed root certificate.  In this case, only the chain up to the intermediate
+		// certificate is verified, and the root certificate is ignored.
+		// See also https://gist.github.com/dmitris/15160f703b3038b1b00d03d3c7b66ce0 and in particular
+		// https://gist.github.com/dmitris/15160f703b3038b1b00d03d3c7b66ce0#file-main-go-L133-L135 as an example.
+		{
+			"switch root and intermediate no error",
+			pemsubRef,
+			pemrootRef,
+			pemleafRef,
+			false,
+			false,
+		},
+		{
+			"leave out the root certificate",
+			"",
+			pemsubRef,
+			pemleafRef,
+			false,
+			true,
+		},
+		{
+			"leave out the intermediate certificate",
+			pemrootRef,
+			"",
+			pemleafRef,
+			false,
+			true,
+		},
+		{
+			"leave out the codesigning leaf certificate which is extracted from the image",
+			pemrootRef,
+			pemsubRef,
+			"",
+			true,
+			false,
+		},
+		{
+			"wrong leaf certificate",
+			pemrootRef,
+			pemsubRef,
+			pemleafRef02,
+			false,
+			true,
+		},
+		{
+			"root and intermediates bundles",
+			pemrootBundleRef,
+			pemsubBundleRef,
+			pemleafRef,
+			false,
+			false,
+		},
+		{
+			"wrong root and intermediates bundles",
+			pemrootRef02,
+			pemsubRef02,
+			pemleafRef,
+			false,
+			true,
+		},
+		{
+			"wrong root bundle",
+			pemrootRef02,
+			pemsubBundleRef,
+			pemleafRef,
+			false,
+			true,
+		},
+		{
+			"wrong intermediates bundle",
+			pemrootRef,
+			pemsubRef02,
+			pemleafRef,
+			false,
+			true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := verifyKeylessTSAWithCARoots(imgName,
+				tt.rootRef,
+				tt.subRef,
+				tt.leafRef,
+				tsaChainRef.Name(),
+				true,
+				true)
+			hasErr := (err != nil)
+			if hasErr != tt.wantError {
+				if tt.wantError {
+					t.Errorf("%s - no expected error", tt.name)
+				} else {
+					t.Errorf("%s - unexpected error: %v", tt.name, err)
+				}
+			}
+			if !tt.skipBlob {
+				err = verifyBlobKeylessWithCARoots(blobRef,
+					string(blobSig),
+					tt.rootRef,
+					tt.subRef,
+					tt.leafRef,
+					true,
+					true)
+				hasErr = (err != nil)
+				if hasErr != tt.wantError {
+					if tt.wantError {
+						t.Errorf("%s - no expected error", tt.name)
+					} else {
+						t.Errorf("%s - unexpected error: %v", tt.name, err)
+					}
+				}
+			}
+		})
+	}
 }
 
 func TestRekorBundle(t *testing.T) {
@@ -1309,6 +1610,50 @@ func TestSignBlobBundle(t *testing.T) {
 	verifyBlobCmd.RekorURL = "notreal"
 	verifyBlobCmd.IgnoreTlog = false
 	must(verifyBlobCmd.Exec(ctx, bp), t)
+}
+
+func TestSignBlobNewBundle(t *testing.T) {
+	td1 := t.TempDir()
+
+	blob := "someblob"
+	blobPath := filepath.Join(td1, blob)
+	if err := os.WriteFile(blobPath, []byte(blob), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	bundlePath := filepath.Join(td1, "bundle.sigstore.json")
+
+	ctx := context.Background()
+	_, privKeyPath, pubKeyPath := keypair(t, td1)
+
+	ko1 := options.KeyOpts{
+		KeyRef:          pubKeyPath,
+		BundlePath:      bundlePath,
+		NewBundleFormat: true,
+	}
+
+	verifyBlobCmd := cliverify.VerifyBlobCmd{
+		KeyOpts:    ko1,
+		IgnoreTlog: true,
+	}
+
+	// Verify should fail before bundle is written
+	mustErr(verifyBlobCmd.Exec(ctx, blobPath), t)
+
+	// Produce signed bundle
+	ko := options.KeyOpts{
+		KeyRef:          privKeyPath,
+		PassFunc:        passFunc,
+		BundlePath:      bundlePath,
+		NewBundleFormat: true,
+	}
+
+	if _, err := sign.SignBlobCmd(ro, ko, blobPath, true, "", "", false); err != nil {
+		t.Fatal(err)
+	}
+
+	// Verify should succeed now that bundle is written
+	must(verifyBlobCmd.Exec(ctx, blobPath), t)
 }
 
 func TestSignBlobRFC3161TimestampBundle(t *testing.T) {
@@ -1921,6 +2266,8 @@ func TestOffline(t *testing.T) {
 	must(err, t)
 
 	sigsTag, err := ociremote.SignatureTag(imgRef)
+	must(err, t)
+
 	if err := remote.Delete(sigsTag); err != nil {
 		t.Fatal(err)
 	}
@@ -2201,6 +2548,7 @@ func getOIDCToken() (string, error) {
 	}
 	return string(body), nil
 }
+<<<<<<< HEAD
 
 func setLocalEnv(t *testing.T, dir string) error {
 	// fulcio repo is downloaded to the user's home directory by e2e_test.sh
@@ -2238,3 +2586,5 @@ func downloadAndSetEnv(t *testing.T, url, envVar, dir string) error {
 	t.Setenv(envVar, f.Name())
 	return nil
 }
+=======
+>>>>>>> v2.4.0

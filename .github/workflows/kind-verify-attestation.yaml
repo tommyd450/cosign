@@ -23,7 +23,7 @@ defaults:
   run:
     shell: bash
 
-permissions: read-all
+permissions: {}
 
 jobs:
   cip-test:
@@ -33,31 +33,34 @@ jobs:
     strategy:
       matrix:
         k8s-version:
-        - v1.25.x
+        - v1.27.x
         tuf-root:
         - remote
         - air-gap
 
+    permissions:
+      contents: read
+
     env:
       KO_DOCKER_REPO: "registry.local:5000/policy-controller"
-      SCAFFOLDING_RELEASE_VERSION: "v0.6.14"
+      SCAFFOLDING_RELEASE_VERSION: "v0.7.5"
       GO111MODULE: on
       GOFLAGS: -ldflags=-s -ldflags=-w
       KOCACHE: ~/ko
       COSIGN_YES: "true"
 
     steps:
-    - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
-    - uses: actions/setup-go@0c52d547c9bc32b1aa3301fd7a9cb496313a4491 # v5.0.0
+    - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+    - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
       with:
-        go-version: '1.21'
+        go-version: '1.22'
         check-latest: true
 
     # will use the latest release available for ko
-    - uses: ko-build/setup-ko@ace48d793556083a76f1e3e6068850c1f4a369aa # v0.6
+    - uses: ko-build/setup-ko@3aebd0597dc1e9d1a26bcfdb7cbeb19c131d3037 # v0.7
 
     - name: Install yq
-      uses: mikefarah/yq@c35ec752e38ea0c096d3c44e13cfc0797ac394d8 # v4.43.1
+      uses: mikefarah/yq@bbdd97482f2d439126582a59689eb1c855944955 # v4.44.3
 
     - name: build cosign
       run: |
