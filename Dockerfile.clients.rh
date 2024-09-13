@@ -1,6 +1,6 @@
 # Provides the Trusted Artifact Signer CLI binaries, cosign and gitsign
 FROM quay.io/securesign/cli-cosign@sha256:4ec69652b96c3cfddc813c42a763d81dc82f894c745a33e99deaa92814f4e918 AS cosign
-FROM quay.io/securesign/gitsign@sha256:26288a765783d5c0ee93c5150523eca7610a021d9725494d4373f0529a2fee29 AS gitsign
+FROM quay.io/securesign/gitsign@sha256:9d95b3eeb2f8c144c2a9e7d9735748448d0a62f0592e336db2682f73f1cb0160 AS gitsign
 
 # Provides the Trusted Artifact Signer CLI binary, fetch-tsa-certs
 FROM quay.io/securesign/fetch-tsa-certs@sha256:04ee10dd6f36b7ebca80c0e7badeb5c69d4ae2b37eb1abbea204d1af4eb1d0cc as fetch_tsa_certs
@@ -13,13 +13,15 @@ FROM registry.redhat.io/rhtas/ec-rhel9:0.5@sha256:815110eec64d0d7fb4af003e86c261
 FROM quay.io/securesign/trillian-createtree@sha256:2a17108678e51bf39d80b3a7fc577ec9c12de10e19286e3e5298fb8cfcf9309c as trillian-createtree
 FROM quay.io/securesign/trillian-updatetree@sha256:cae560a63bc4f6aae4c8d5110ca903f52518be7b7db34ddebf29a541f04c6c45 as trillian-updatetree
 
+FROM quay.io/securesign/cli-tuftool:5f0506773f5e6c7b8b4538ba1e47189bc6c2b76c as tuf-tool
+
 FROM registry.access.redhat.com/ubi9/httpd-24@sha256:d073a0a800d9e410f4c0ac5a854bdc88b1382d9757e4c480ede202b477310c8b
 ENV APP_ROOT=/opt/app-root
 WORKDIR $APP_ROOT/src/
 
-RUN mkdir -p "/var/www/html/clients/darwin" && \
-    mkdir -p "/var/www/html/clients/linux" && \
-    mkdir -p "/var/www/html/clients/windows"
+RUN mkdir -p /var/www/html/clients/darwin && \
+    mkdir -p /var/www/html/clients/linux && \
+    mkdir -p /var/www/html/clients/windows
 
 # Copy the cosign binaries from the previous stages
 COPY --from=cosign /usr/local/bin/cosign-darwin-amd64.gz  /var/www/html/clients/darwin/cosign-amd64.gz
@@ -83,6 +85,9 @@ COPY --from=trillian-updatetree /usr/local/bin/updatetree-linux-arm64.gz  /var/w
 COPY --from=trillian-updatetree /usr/local/bin/updatetree-linux-ppc64le.gz /var/www/html/clients/linux/updatetree-ppc64le.gz
 COPY --from=trillian-updatetree /usr/local/bin/updatetree-linux-s390x.gz   /var/www/html/clients/linux/updatetree-s390x.gz
 COPY --from=trillian-updatetree /usr/local/bin/updatetree-windows-amd64.exe.gz /var/www/html/clients/windows/updatetree-amd64.gz
+
+COPY --from=tuf-tool /usr/bin/tuftool /var/www/html/clients/linux/tuftool-amd64
+RUN gzip /var/www/html/clients/linux/tuftool-amd64
 
 LABEL \
       com.redhat.component="trusted-artifact-signer-serve-cli-container" \
