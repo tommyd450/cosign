@@ -87,6 +87,7 @@ COPY --from=trillian-updatetree /usr/local/bin/updatetree-linux-s390x.gz   /var/
 COPY --from=trillian-updatetree /usr/local/bin/updatetree-windows-amd64.exe.gz /var/www/html/clients/windows/updatetree-amd64.gz
 
 COPY --from=tuf-tool /usr/bin/tuftool /var/www/html/clients/linux/tuftool-amd64
+RUN gzip /var/www/html/clients/linux/tuftool-amd64
 
 LABEL \
       com.redhat.component="trusted-artifact-signer-serve-cli-container" \
