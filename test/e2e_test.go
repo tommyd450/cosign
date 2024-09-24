@@ -21,7 +21,12 @@ import (
 	"bytes"
 	"context"
 	"crypto"
+	"crypto/rand"
+	"crypto/sha256"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/json"
+	"encoding/pem"
 	"fmt"
 	"io"
 	"net/http"
@@ -55,6 +60,8 @@ import (
 	"github.com/sigstore/cosign/v2/cmd/cosign/cli/sign"
 	cliverify "github.com/sigstore/cosign/v2/cmd/cosign/cli/verify"
 	"github.com/sigstore/cosign/v2/internal/pkg/cosign/fulcio/fulcioroots"
+	"github.com/sigstore/cosign/v2/internal/pkg/cosign/tsa"
+	"github.com/sigstore/cosign/v2/internal/pkg/cosign/tsa/client"
 	"github.com/sigstore/cosign/v2/pkg/cosign"
 	"github.com/sigstore/cosign/v2/pkg/cosign/bundle"
 	"github.com/sigstore/cosign/v2/pkg/cosign/env"
@@ -2548,43 +2555,3 @@ func getOIDCToken() (string, error) {
 	}
 	return string(body), nil
 }
-<<<<<<< HEAD
-
-func setLocalEnv(t *testing.T, dir string) error {
-	// fulcio repo is downloaded to the user's home directory by e2e_test.sh
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return fmt.Errorf("error getting home directory: %w", err)
-	}
-	t.Setenv(env.VariableSigstoreCTLogPublicKeyFile.String(), path.Join(home, "fulcio/config/ctfe/pubkey.pem"))
-	err = downloadAndSetEnv(t, fulcioURL+"/api/v1/rootCert", env.VariableSigstoreRootFile.String(), dir)
-	if err != nil {
-		return fmt.Errorf("error setting %s env var: %w", env.VariableSigstoreRootFile.String(), err)
-	}
-	err = downloadAndSetEnv(t, rekorURL+"/api/v1/log/publicKey", env.VariableSigstoreRekorPublicKey.String(), dir)
-	if err != nil {
-		return fmt.Errorf("error setting %s env var: %w", env.VariableSigstoreRekorPublicKey.String(), err)
-	}
-	return nil
-}
-
-func downloadAndSetEnv(t *testing.T, url, envVar, dir string) error {
-	resp, err := http.Get(url)
-	if err != nil {
-		return fmt.Errorf("error downloading file: %w", err)
-	}
-	defer resp.Body.Close()
-	f, err := os.CreateTemp(dir, "")
-	if err != nil {
-		return fmt.Errorf("error creating temp file: %w", err)
-	}
-	defer f.Close()
-	_, err = io.Copy(f, resp.Body)
-	if err != nil {
-		return fmt.Errorf("error writing to file: %w", err)
-	}
-	t.Setenv(envVar, f.Name())
-	return nil
-}
-=======
->>>>>>> v2.4.0

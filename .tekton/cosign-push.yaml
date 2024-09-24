@@ -179,7 +179,7 @@ spec:
           value: quay.io/redhat-appstudio-tekton-catalog/task-prefetch-dependencies-oci-ta:0.1@sha256:57979e1c289bfe09acb70401f35558a9032e749b398a43fea049c044f9d96afe
         - name: kind
           value: task
-        resolver: bundles<<<<<<< unit_tests_on_tas_pipeline_v2
+        resolver: bundles
     - name: build-container
       params:
       - name: IMAGE
