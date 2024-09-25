@@ -31,7 +31,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: prefetch-input
-    value: ''
+    value: '{"type": "gomod", "path": "."}'
   - name: hermetic
     value: "true"
   - name: build-source-image
