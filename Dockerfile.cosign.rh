@@ -10,7 +10,7 @@ RUN git config --global --add safe.directory /cosign && \
     export GIT_HASH=$(git rev-parse HEAD) && \
     export BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && \
     # git stash pop && \
-    go mod download && \
+    go mod vendor && \
     make -f Build.mak cross-platform && \
     cp cosign-linux-amd64 cosign && \
     gzip cosign-linux-amd64 && \
