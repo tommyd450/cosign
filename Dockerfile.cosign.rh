@@ -5,11 +5,10 @@ WORKDIR /cosign
 COPY . .
 USER root
 RUN git config --global --add safe.directory /cosign && \
-    # git stash && \
+    git update-index --assume-unchanged Dockerfile.cosign.rh && \
     export GIT_VERSION=$(git describe --tags --always --dirty) && \
     export GIT_HASH=$(git rev-parse HEAD) && \
     export BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ') && \
-    # git stash pop && \
     go mod vendor && \
     make -f Build.mak cross-platform && \
     cp cosign-linux-amd64 cosign && \
@@ -19,7 +18,8 @@ RUN git config --global --add safe.directory /cosign && \
     gzip cosign-linux-arm64 && \
     gzip cosign-darwin-amd64 && \
     gzip cosign-darwin-arm64 && \
-    gzip cosign-windows-amd64.exe
+    gzip cosign-windows-amd64.exe && \
+    git update-index --no-assume-unchanged Dockerfile.cosign.rh
 
 # Install Cosign
 FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:73f7dcacb460dad137a58f24668470a5a2e47378838a0190eef0ab532c6e8998
