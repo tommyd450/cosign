@@ -3,7 +3,7 @@
 FROM quay.io/securesign/cli-cosign@sha256:4ec69652b96c3cfddc813c42a763d81dc82f894c745a33e99deaa92814f4e918 AS cosign
 FROM quay.io/securesign/gitsign@sha256:26288a765783d5c0ee93c5150523eca7610a021d9725494d4373f0529a2fee29 AS gitsign
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:73f7dcacb460dad137a58f24668470a5a2e47378838a0190eef0ab532c6e8998
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:f5d2c6a1e0c86e4234ea601552dbabb4ced0e013a1efcbfb439f1f6a7a9275b0
 ENV APP_ROOT=/opt/app-root
 WORKDIR $APP_ROOT/src/
 
