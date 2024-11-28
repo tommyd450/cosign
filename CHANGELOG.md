@@ -1,3 +1,62 @@
+# v2.4.1
+
+v2.4.1 largely contains bug fixes and updates dependencies.
+
+## Features
+
+* Added fuzzing coverage to multiple packages
+
+## Bug Fixes
+* Fix bug in attest-blob when using a timestamp authority with new bundles (#3877)
+* fix: documentation link for installation guide (#3884)
+
+## Contributors
+
+* AdamKorcz
+* Bob Callaway
+* Carlos Tadeu Panato Junior
+* Hayden B
+* Hemil K
+* Sota Sugiura
+* Zach Steindler
+
+# v2.4.0
+
+v2.4.0 begins the modernization of the Cosign client, which includes:
+
+* Support for the newer Sigstore specification-compliant bundle format
+* Support for providing trust roots (e.g. Fulcio certificates, Rekor keys)
+  through a trust root file, instead of many different flags
+* Conformance test suite integration to verify signing and verification behavior
+
+In future updates, we'll include:
+
+* General support for the trust root file, instead of only when using the bundle
+  format during verification
+* Simplification of trust root flags and deprecation of the
+  Cosign-specific bundle format
+* Bundle support with container signing
+
+We have also moved nightly Cosign container builds to GHCR instead of GCR.
+
+## Features
+
+* Add new bundle support to `verify-blob` and `verify-blob-attestation` (#3796)
+* Adding protobuf bundle support to sign-blob and attest-blob (#3752)
+* Bump sigstore/sigstore to support `email_verified` as string or boolean (#3819)
+* Conformance testing for cosign (#3806)
+* move incremental builds per commit to GHCR instead of GCR (#3808)
+* Add support for recording creation timestamp for cosign attest (#3797)
+* Include SCT verification failure details in error message (#3799)
+
+## Contributors
+
+* Bob Callaway
+* Hayden B
+* Slavek Kabrda
+* Zach Steindler
+* Zsolt Horvath
+
 # v2.3.0
 
 ## Features
