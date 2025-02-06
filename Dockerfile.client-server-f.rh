@@ -1,7 +1,7 @@
 # Provides the Trusted Artifact Signer CLI binary, fetch-tsa-certs
 FROM quay.io/securesign/fetch-tsa-certs@sha256:04ee10dd6f36b7ebca80c0e7badeb5c69d4ae2b37eb1abbea204d1af4eb1d0cc as fetch_tsa_certs
 
-FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:e408de45e95eed0539fe821d31aa4288fe430d94f09a24c13c567bf99044dace
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:a9c41b5bff991254fc62846fd1cd377ce1967dfd66dc2c76432610ab2586b29b
 ENV APP_ROOT=/opt/app-root
 WORKDIR $APP_ROOT/src/
 
