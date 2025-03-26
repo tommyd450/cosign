@@ -18,7 +18,7 @@ require (
 	github.com/go-openapi/swag v0.23.0
 	github.com/go-piv/piv-go/v2 v2.3.0
 	github.com/google/certificate-transparency-go v1.3.1
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	github.com/google/go-containerregistry v0.20.3
 	github.com/google/go-github/v55 v55.0.0
 	github.com/in-toto/in-toto-golang v0.9.0
@@ -34,7 +34,7 @@ require (
 	github.com/sigstore/fulcio v1.6.6
 	github.com/sigstore/protobuf-specs v0.4.0
 	github.com/sigstore/rekor v1.3.9
-	github.com/sigstore/sigstore v1.8.15
+	github.com/sigstore/sigstore v1.9.1
 	github.com/sigstore/sigstore-go v0.7.0
 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.9.1
 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.8.15
@@ -51,7 +51,7 @@ require (
 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1
 	gitlab.com/gitlab-org/api/client-go v0.123.0
 	golang.org/x/crypto v0.35.0
-	golang.org/x/oauth2 v0.26.0
+	golang.org/x/oauth2 v0.27.0
 	golang.org/x/sync v0.11.0
 	golang.org/x/term v0.29.0
 	google.golang.org/api v0.221.0
