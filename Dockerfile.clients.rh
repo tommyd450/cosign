@@ -7,7 +7,7 @@ FROM quay.io/securesign/fetch-tsa-certs@sha256:852f883b58759e08ffc7d1eb6aa03b310
 
 # Provides the Trusted Artifact Signer CLI binaries, rekor-cli and ec
 FROM quay.io/securesign/rekor-cli@sha256:bc9ab79a853b7bb4c183f4e2ded84cb40fdc3fb7f41e9f7134058a995bda4d1b as rekor
-FROM registry.redhat.io/rhtas/ec-rhel9:0.5@sha256:3d330b4c742f584be63cf11e451f7822863a5960976a721e18bd8b2e9f1c0038 as ec
+FROM registry.redhat.io/rhtas/ec-rhel9:0.6@sha256:e7f3cefadd1f4a65f242fb0b86f8083bbb17a91fd65f2ae65d128b7937d3e736 as ec
 
 # Provides the Trusted Artifact Signer CLI binaries trillian-createtree and trillian-updatetree
 FROM quay.io/securesign/trillian-createtree@sha256:43da71295323660fd9992e3ba2e2ad63ed9f729dbb42401e041ad02c73da718a as trillian-createtree
