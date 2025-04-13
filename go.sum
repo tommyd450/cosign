@@ -580,8 +580,8 @@ github.com/prometheus/common v0.62.0 h1:xasJaQlnWAeyHdUBeGjXmutelfJHWMRr+Fg4QszZ
 github.com/prometheus/common v0.62.0/go.mod h1:vyBcEuLSvWos9B1+CyL7JZ2up+uFzXhkqml0W5zIY1I=
 github.com/prometheus/procfs v0.15.1 h1:YagwOFzUgYfKKHX6Dr+sHT7km/hxC76UB0learggepc=
 github.com/prometheus/procfs v0.15.1/go.mod h1:fB45yRUv8NstnjriLhBQLuOUt+WW4BsoGhij/e3PBqk=
-github.com/protocolbuffers/txtpbfmt v0.0.0-20241112170944-20d2c9ebc01d h1:HWfigq7lB31IeJL8iy7jkUmU/PG1Sr8jVGhS749dbUA=
-github.com/protocolbuffers/txtpbfmt v0.0.0-20241112170944-20d2c9ebc01d/go.mod h1:jgxiZysxFPM+iWKwQwPR+y+Jvo54ARd4EisXxKYpB5c=
+github.com/protocolbuffers/txtpbfmt v0.0.0-20250326144435-a5fe55684d52 h1:VpE48b5MHNTrB/XI6HTVTWhFdwul6JnJOa0ZI3uERA4=
+github.com/protocolbuffers/txtpbfmt v0.0.0-20250326144435-a5fe55684d52/go.mod h1:BnHogPTyzYAReeQLZrOxyxzS739DaTNtTvohVdbENmA=
 github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 h1:bsUq1dX0N8AOIL7EB/X911+m4EHsnWEHeJ0c+3TTBrg=
 github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9/go.mod h1:bCqnVzQkZxMG4s8nGwiZ5l3QUCyqpo9Y+/ZMZ9VjZe4=
 github.com/redis/go-redis/v9 v9.7.0 h1:HhLSs+B6O021gwzl+locl0zEDnyNkxMtf/Z3NNBMa9E=
