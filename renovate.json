@@ -2,6 +2,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
-        "github>securesign/actions:centralRenovate.json"
+        "github>tommyd450/actions:centralRenovate.json"
     ]
 }
