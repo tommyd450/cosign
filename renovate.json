@@ -1,9 +1,6 @@
 
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "extends": [
-        "github>tommyd450/actions:centralRenovate.json"
-    ],
     "gomod": {
         "schedule": [
           "after 9am on tuesday"
@@ -23,5 +20,8 @@
             "enabled": true
           }
         ]
-  },
+      },
+    "extends": [
+        "github>tommyd450/actions:centralRenovate.json"
+    ]
 }
