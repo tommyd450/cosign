@@ -6,7 +6,7 @@
     ],
     "gomod": {
         "schedule": [
-          "after 5am on sunday"
+          "after 9am on tuesday"
         ],
         "postUpdateOptions": [
           "gomodUpdateImportPaths",
