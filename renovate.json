@@ -4,7 +4,24 @@
     "extends": [
         "github>tommyd450/actions:centralRenovate.json"
     ],
-    "schedule": [
-    "* 9-19 * * *"
-    ]
+    "gomod": {
+        "schedule": [
+          "after 5am on sunday"
+        ],
+        "postUpdateOptions": [
+          "gomodUpdateImportPaths",
+          "gomodTidy"
+        ],
+        "packageRules": [
+          {
+            "matchManagers": [
+              "gomod"
+            ],
+            "matchDepTypes": [
+              "indirect"
+            ],
+            "enabled": true
+          }
+        ]
+  },
 }
