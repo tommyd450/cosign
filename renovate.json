@@ -3,5 +3,8 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
         "github>tommyd450/actions:centralRenovate.json"
+    ],
+    "schedule": [
+    "* 0-19 * * *"
     ]
 }
