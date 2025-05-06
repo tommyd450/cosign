@@ -11,7 +11,10 @@
         "description": ["Group all Go module updates together"],
         "matchManagers": ["gomod"],
         "groupName": "Go Dependencies",
-        "groupSlug": "go-deps"
+        "groupSlug": "go-deps",
+        "constraints": {
+            "go": "1.23"
+        }
       },
       {
         "description": ["Group all Docker image updates together"],
