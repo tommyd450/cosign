@@ -7,11 +7,8 @@
       {
         "description": ["Group all Go module updates together"],
         "matchManagers": ["gomod"],
-        "groupName": "Go Dependencies2",
-        "groupSlug": "go-deps2",
-        "matchPackageNames": [
-          "*"
-        ]
+        "groupName": "Go Dependencies",
+        "groupSlug": "go-deps"
       },
       {
         "description": ["Group all Docker image updates together"],
