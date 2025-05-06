@@ -12,7 +12,6 @@
         "matchManagers": ["gomod"],
         "groupName": "Go Dependencies3",
         "groupSlug": "go-deps3",
-        "matchDatasources": ["golang-version"],
         "rangeStrategy": "bump",
         "constraints": {
             "go": "< 1.24"
