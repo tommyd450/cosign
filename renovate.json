@@ -3,6 +3,9 @@
     "labels": ["dependencies"],
     "enabledManagers": ["dockerfile", "npm","pip_requirements","gomod","cargo"],
     "separateMajorMinor": false,
+    "branchConcurrentLimit": 50,
+    "prConcurrentLimit": 50,
+    "prHourlyLimit": 0,
     "packageRules": [
       {
         "description": ["Group all Go module updates together"],
