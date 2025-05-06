@@ -10,8 +10,8 @@
       {
         "description": ["Group all Go module updates together"],
         "matchManagers": ["gomod"],
-        "groupName": "Go Dependencies2",
-        "groupSlug": "go-deps2",
+        "groupName": "Go Dependencies3",
+        "groupSlug": "go-deps3",
         "constraints": {
             "go": "< 1.24"
         },  
