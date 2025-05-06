@@ -6,8 +6,10 @@
     "branchConcurrentLimit": 50,
     "prConcurrentLimit": 50,
     "prHourlyLimit": 0,
-    "constraints": {
+    "force" : {
+      "constraints": {
         "go": "1.23"
+      },  
     },
     "packageRules": [
       {
