@@ -12,7 +12,9 @@
         "matchPackageNames": [
           "*"
         ], 
-        "allowedVersions": "<1.24.0"
+        "constraints": {
+          "go": "1.23"
+        }
       },
       {
         "description": ["Group all Docker image updates together"],
