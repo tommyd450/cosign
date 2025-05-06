@@ -11,10 +11,7 @@
         "groupSlug": "go-deps2",
         "matchPackageNames": [
           "*"
-        ], 
-        "constraints": {
-          "go": "1.23"
-        }
+        ]
       },
       {
         "description": ["Group all Docker image updates together"],
