@@ -32,9 +32,9 @@ require (
 	github.com/open-policy-agent/opa v1.1.0
 	github.com/secure-systems-lab/go-securesystemslib v0.9.0
 	github.com/sigstore/fulcio v1.6.6
-	github.com/sigstore/protobuf-specs v0.4.0
+	github.com/sigstore/protobuf-specs v0.4.1
 	github.com/sigstore/rekor v1.3.9
-	github.com/sigstore/sigstore v1.9.1
+	github.com/sigstore/sigstore v1.9.4
 	github.com/sigstore/sigstore-go v0.7.0
 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.9.1
 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.8.15
@@ -51,7 +51,7 @@ require (
 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1
 	gitlab.com/gitlab-org/api/client-go v0.123.0
 	golang.org/x/crypto v0.37.0
-	golang.org/x/oauth2 v0.28.0
+	golang.org/x/oauth2 v0.29.0
 	golang.org/x/sync v0.13.0
 	golang.org/x/term v0.31.0
 	google.golang.org/api v0.227.0
@@ -136,7 +136,7 @@ require (
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.16.3 // indirect
-	github.com/coreos/go-oidc/v3 v3.12.0 // indirect
+	github.com/coreos/go-oidc/v3 v3.14.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/digitorus/pkcs7 v0.0.0-20230818184609-3a137a874352 // indirect
