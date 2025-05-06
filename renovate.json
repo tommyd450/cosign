@@ -11,7 +11,7 @@
         "description": ["Group all Go module updates together"],
         "matchManagers": ["gomod"],
         "groupName": "Go Dependencies2",
-        "groupSlug": "go-deps2"
+        "groupSlug": "go-deps2",
         "allowedVersions": "<1.24.0"
       },
       {
