@@ -6,17 +6,15 @@
     "branchConcurrentLimit": 50,
     "prConcurrentLimit": 50,
     "prHourlyLimit": 0,
-    "force" : {
-      "constraints": {
-        "go": "< 1.24"
-      },  
-    },
     "packageRules": [
       {
         "description": ["Group all Go module updates together"],
         "matchManagers": ["gomod"],
         "groupName": "Go Dependencies2",
-        "groupSlug": "go-deps2"
+        "groupSlug": "go-deps2",
+        "constraints": {
+            "go": "< 1.24"
+        },  
       },
       {
         "description": ["Group all Docker image updates together"],
