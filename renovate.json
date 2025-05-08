@@ -4,7 +4,6 @@
     "enabledManagers": [
         "tekton",
         "dockerfile",
-        "rpm",
         "custom.regex",
         "argocd",
         "crossplane",
@@ -55,7 +54,7 @@
         "description": ["Group all Go module updates together"],
         "matchManagers": ["gomod","ocb"],
         "groupName": "Go Dependencies3",
-        "groupSlug": "go-deps3",
+        "groupSlug": "go-deps3"
       },
       {
         "description": ["Group all Docker image updates together"],
