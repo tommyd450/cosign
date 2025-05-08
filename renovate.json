@@ -9,7 +9,7 @@
     "packageRules": [
       {
         "description": ["Group all Go module updates together"],
-        "matchManagers": ["gomod"],
+        "matchManagers": ["gomod","ocb"],
         "groupName": "Go Dependencies3",
         "groupSlug": "go-deps3",
         "allowedVersions": "<1.24.0"
