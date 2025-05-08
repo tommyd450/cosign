@@ -2,6 +2,8 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "labels": ["dependencies"],
     "enabledManagers": ["dockerfile", "npm","pip_requirements","gomod","cargo"],
+    "prHourlyLimit": 0,
+    "prCreation": "immediate",
     "packageRules": [
       {
         "description": ["Group all Go module updates together"],
