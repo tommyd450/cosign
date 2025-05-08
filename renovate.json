@@ -67,6 +67,17 @@
       "postUpdateOptions": [
         "gomodUpdateImportPaths",
         "gomodTidy"
+      ],
+    "packageRules": [
+        {
+          "matchManagers": [
+            "gomod"
+          ],
+          "matchDepTypes": [
+            "indirect"
+          ],
+          "enabled": true
+        }
       ]
     },
     "ignoreDeps": [
