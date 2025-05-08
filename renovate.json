@@ -3,6 +3,8 @@
     "labels": ["dependencies"],
     "enabledManagers": ["dockerfile", "npm","pip_requirements","gomod","cargo"],
     "prHourlyLimit": 0,
+    "branchConcurrentLimit": 50,
+    "prConcurrentLimit": 50,
     "prCreation": "immediate",
     "packageRules": [
       {
