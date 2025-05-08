@@ -1,60 +1,13 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "labels": ["dependencies"],
-    "enabledManagers": [
-        "tekton",
-        "dockerfile",
-        "custom.regex",
-        "argocd",
-        "crossplane",
-        "fleet",
-        "flux",
-        "helm-requirements",
-        "helm-values",
-        "helmfile",
-        "helmsman",
-        "helmv3",
-        "jsonnet-bundler",
-        "kubernetes",
-        "kustomize",
-        "asdf",
-        "fvm",
-        "git-submodules",
-        "hermit",
-        "homebrew",
-        "osgi",
-        "pre-commit",
-        "vendir",
-        "terraform",
-        "terraform-version",
-        "terragrunt",
-        "terragrunt-version",
-        "tflint-plugin",
-        "pep621",
-        "pep723",
-        "pip-compile",
-        "pip_requirements",
-        "pip_setup",
-        "pipenv",
-        "poetry",
-        "pyenv",
-        "runtime-version",
-        "setup-cfg",
-        "gomod",
-        "ocb",
-        "gitlabci",
-        "gitlabci-include"
-    ],
-    "separateMajorMinor": false,
-    "branchConcurrentLimit": 50,
-    "prConcurrentLimit": 50,
-    "prHourlyLimit": 0,
+    "enabledManagers": ["dockerfile", "npm","pip_requirements","gomod","cargo","ocb"],
     "packageRules": [
       {
         "description": ["Group all Go module updates together"],
-        "matchManagers": ["gomod","ocb"],
-        "groupName": "Go Dependencies3",
-        "groupSlug": "go-deps3"
+        "matchManagers": ["gomod"],
+        "groupName": "Go Dependencies",
+        "groupSlug": "go-deps"
       },
       {
         "description": ["Group all Docker image updates together"],
@@ -86,7 +39,7 @@
         ],
         "matchPackageNames": [
           "golang"
-        ],
+        ]
       },
       {
         "matchDatasources": [
@@ -114,30 +67,5 @@
       "registry.redhat.io/rhtas/segment-reporting-rhel9",
       "registry.redhat.io/rhtas/timestamp-authority-rhel9",
       "registry.redhat.io/rhtas/client-server-rhel9"
-    ],
-    "gomod": {
-        "schedule": [
-        "after 5am on sunday"
-        ],
-        "postUpdateOptions": [
-        "gomodUpdateImportPaths",
-        "gomodTidy"
-        ],
-        "packageRules": [
-        {
-            "matchManagers": [
-            "gomod"
-            ],
-            "matchDepTypes": [
-            "indirect"
-            ],
-            "enabled": true
-        }
-        ]
-    },
-    "ocb": {
-        "schedule": [
-        "after 5am on sunday"
-        ]
-    },
+    ]
   }
