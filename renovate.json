@@ -77,7 +77,8 @@
           "matchDepTypes": [
             "indirect"
           ],
-          "enabled": true
+          "enabled": true,
+          "allowedVersions": "<1.24.0"
         }
       ]
     },
