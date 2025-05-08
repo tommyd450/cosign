@@ -13,6 +13,7 @@
         "matchDepTypes": ["*"],
         "groupName": "Go Dependencies4",
         "groupSlug": "go-deps4"
+        "allowedVersions": "<1.24.0"
       },
       {
         "description": ["Group all Docker image updates together"],
