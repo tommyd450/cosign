@@ -8,8 +8,8 @@
       {
         "description": ["Group all Go module updates together"],
         "matchManagers": ["gomod"],
-        "groupName": "Go Dependencies",
-        "groupSlug": "go-deps"
+        "groupName": "Go Dependencies4",
+        "groupSlug": "go-deps4"
       },
       {
         "description": ["Group all Docker image updates together"],
