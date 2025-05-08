@@ -67,7 +67,7 @@
       "postUpdateOptions": [
         "gomodUpdateImportPaths",
         "gomodTidy"
-      ],
+      ]
     },
     "ignoreDeps": [
       "registry.redhat.io/rhtas/rhtas-rhel9-operator",
