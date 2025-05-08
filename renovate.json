@@ -1,7 +1,7 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "labels": ["dependencies"],
-    "enabledManagers": ["dockerfile", "npm","pip_requirements","gomod","cargo","ocb"],
+    "enabledManagers": ["dockerfile", "npm","pip_requirements","gomod","cargo"],
     "packageRules": [
       {
         "description": ["Group all Go module updates together"],
@@ -35,11 +35,18 @@
       },
       {
         "matchDatasources": [
+          "golang-version"
+        ],
+        "allowedVersions": "<1.24.0"
+      },
+      {
+        "matchDatasources": [
           "docker"
         ],
         "matchPackageNames": [
           "golang"
-        ]
+        ],
+        "allowedVersions": "<1.24.0"
       },
       {
         "matchDatasources": [
@@ -51,6 +58,26 @@
         "allowedVersions": "<3.12.0"
       }
     ],
+    "gomod": {
+      "schedule": [
+        "after 5am on sunday"
+      ],
+      "postUpdateOptions": [
+        "gomodUpdateImportPaths",
+        "gomodTidy"
+      ],
+      "packageRules": [
+        {
+          "matchManagers": [
+            "gomod"
+          ],
+          "matchDepTypes": [
+            "indirect"
+          ],
+          "enabled": true
+        }
+      ]
+    },
     "ignoreDeps": [
       "registry.redhat.io/rhtas/rhtas-rhel9-operator",
       "registry.redhat.io/rhtas/trillian-logsigner-rhel9",
