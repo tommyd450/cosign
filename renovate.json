@@ -56,7 +56,6 @@
         "matchManagers": ["gomod","ocb"],
         "groupName": "Go Dependencies3",
         "groupSlug": "go-deps3",
-        "allowedVersions": "<1.24.0"
       },
       {
         "description": ["Group all Docker image updates together"],
@@ -89,7 +88,6 @@
         "matchPackageNames": [
           "golang"
         ],
-        "allowedVersions": "<1.24.0"
       },
       {
         "matchDatasources": [
