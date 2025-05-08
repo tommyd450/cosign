@@ -12,7 +12,7 @@
         "matchManagers": ["gomod"],
         "matchDepTypes": ["*"],
         "groupName": "Go Dependencies4",
-        "groupSlug": "go-deps4"
+        "groupSlug": "go-deps4",
         "allowedVersions": "<1.24.0"
       },
       {
@@ -38,12 +38,6 @@
         "matchManagers": ["npm"],
         "groupName": "NPM Dependencies",
         "groupSlug": "npm-deps"
-      },
-      {
-        "matchDatasources": [
-          "golang-version"
-        ],
-        "allowedVersions": "<1.24.0"
       },
       {
         "matchDatasources": [
@@ -77,8 +71,7 @@
           "matchDepTypes": [
             "indirect"
           ],
-          "enabled": true,
-          "allowedVersions": "<1.24.0"
+          "enabled": true
         }
       ]
     },
