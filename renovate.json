@@ -63,9 +63,6 @@
       }
     ],
     "gomod": {
-      "schedule": [
-        "after 5am on sunday"
-      ],
       "postUpdateOptions": [
         "gomodUpdateImportPaths",
         "gomodTidy"
