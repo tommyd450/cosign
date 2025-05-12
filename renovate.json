@@ -10,7 +10,8 @@
       {
         "description": ["Group all Go module updates together"],
         "matchManagers": ["gomod"],
-        "matchDepTypes": ["*"],
+        "matchDepTypes": ["*","indirect"],
+        "enabled": true
         "groupName": "Go Dependencies",
         "groupSlug": "go-deps",
         "allowedVersions": "<1.24.0"
