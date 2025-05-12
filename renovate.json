@@ -6,7 +6,7 @@
     "branchConcurrentLimit": 50,
     "prConcurrentLimit": 50,
     "prCreation": "immediate",
-    "groupDependencies": "1",
+    "groupDependencies": "2",
     "packageRules": [
       {
         "description": ["Group all Go module updates together"],
