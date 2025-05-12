@@ -8,6 +8,14 @@
     "prCreation": "immediate",
     "packageRules": [
       {
+        "description": ["Group all Go module updates together"],
+        "matchManagers": ["gomod"],
+        "matchDepTypes": ["*"],
+        "groupName": "Go Dependencies",
+        "groupSlug": "go-deps",
+        "allowedVersions": "<1.24.0"
+      },
+      {
         "description": ["Group all Docker image updates together"],
         "matchManagers": ["dockerfile"],
         "groupName": "Docker Images",
@@ -53,17 +61,6 @@
       "postUpdateOptions": [
         "gomodUpdateImportPaths",
         "gomodTidy"
-      ],
-    "packageRules": [
-        {
-          "matchManagers": [
-            "gomod"
-          ],
-          "matchDepTypes": [
-            "indirect"
-          ],
-          "enabled": true
-        }
       ]
     },
     "ignoreDeps": [
