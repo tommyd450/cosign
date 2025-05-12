@@ -8,14 +8,6 @@
     "prCreation": "immediate",
     "packageRules": [
       {
-        "description": ["Group all Go module updates together"],
-        "matchManagers": ["gomod"],
-        "matchDepTypes": ["*"],
-        "groupName": "Go Dependencies4",
-        "groupSlug": "go-deps4",
-        "allowedVersions": "<1.24.0"
-      },
-      {
         "description": ["Group all Docker image updates together"],
         "matchManagers": ["dockerfile"],
         "groupName": "Docker Images",
